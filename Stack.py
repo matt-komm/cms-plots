@@ -1,3 +1,9 @@
-class Stack:
+from Drawable import *
+
+class Stack(Drawable):
     def __init__(self):
-        pass
+        Drawable.__init__(self)
+        
+    def draw(self):
+        raise NotImplemented
+        
