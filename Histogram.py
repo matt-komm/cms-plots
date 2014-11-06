@@ -1,10 +1,12 @@
 from Style import *
+from Task import *
         
 class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
     def __init__(self):
         LineStyle.__init__(self)
         FillStyle.__init__(self)
         MarkerStyle.__init__(self)
+        self.drawingOption=""
         
     @staticmethod
     def createFilled(fillColor=1,fillStyle=1001):
@@ -19,6 +21,8 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         s.markerColor=1
         s.markerStyle=20
         s.markerSize=1.0
+        
+        s.drawingOption="HIST"
         
         return s
         
@@ -36,10 +40,18 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         s.markerStyle=markerStyle
         s.markerSize=markerSize
         
+        s.drawingOption="P"
+        
         return s
+        
+    def applyStyle(self,histogram):
+        histogram.SetLineColor(self.lineColor)
+        
+        
 
-class Histogram:
+class Histogram(Task):
     def __init__(self):
+        Task.__init__(self)
         self._style=HistogramStyle()
         
     def setStyle(self,style):
@@ -47,3 +59,7 @@ class Histogram:
         
     def projectFromTree(rootTree,varStr,cutStr):
         pass
+        
+    def process(self):
+        pass
+
