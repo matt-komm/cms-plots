@@ -87,23 +87,42 @@ class Histogram1D(Drawable):
     def __init__(self):
         Drawable.__init__(self,hasAxis=True)
         self._style=HistogramStyle()
-        self.binning=None
-        self.rootHistogram=None
+        self._binning=None
+        self._rootHistogram=None
         
     def setStyle(self,style):
         self._style=style
         
+    def addHistogram(self,otherHistogram,scale=1.0):
+        self._rootHistogram.Add(otherHistogram._rootHistogram,scale)
+        
+    @staticmethod
+    def createEmpty(binning):
+        h = Histogram1D()
+        h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
+        h._binning=binning
+        return h
+        
     @staticmethod
     def projectFromTree(rootTree,varStr,cutStr,binning):
         h = Histogram1D()
-        h.rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
-        h.binning=binning
-        rootTree.Project(h.rootHistogram.GetName(),varStr,cutStr)
+        h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
+        h._binning=binning
+        rootTree.Project(h._rootHistogram.GetName(),varStr,cutStr)
         return h
         
-    def draw(self):
-        self._style.applyStyle(self.rootHistogram)
-        self.rootHistogram.Draw(self._style.drawingOption)
+    def draw(self,addOptions=""):
+        self._style.applyStyle(self._rootHistogram)
+        self._rootHistogram.Draw(self._style.drawingOption+addOptions)
+        
+    def getBoundingBox(self):
+        return BoundingBox(
+            BoundingBox.COORDINATES,
+            self._rootHistogram.GetXaxis().GetXmin(),
+            self._rootHistogram.GetMinimum(),
+            self._rootHistogram.GetXaxis().GetXmax(),
+            self._rootHistogram.GetMaximum() 
+        )
         
         
 

@@ -42,25 +42,31 @@ class AxisStyle:
         
         
 class CoordinateStyle:
-    def __init__(self,xtitle="",ytitle="",xscale=1,yscale=1):
+    def __init__(self,xtitle="",ytitle="",unitBinning=None,unit="",xscale=1,yscale=1):
         self.xaxis=AxisStyle(xtitle,xscale)
         self.yaxis=AxisStyle(ytitle,yscale)
         
         self.xaxis.titleOffset=1.05
         self.yaxis.titleOffset=1.3
         
-    def applyStyle(self,rootXaxis,rootYaxis,unitAxis=None,unit=""):
-        if unitAxis:
-            if unit!="":
+        self.unitBinning=unitBinning
+        self.unit=unit
+        
+    def applyStyle(self,rootGrid):
+        unit=""
+        if self.unitBinning:
+            if self.unit!="":
+                unit=self.unit
                 self.xaxis.unit=" ("+unit+")"
             else:
                 unit="units"
-            if unitAxis.GetBinWidth(1)==1.0*int(unitAxis.GetBinWidth(1)):
-                self.yaxis.unit=" / "+str(int(unitAxis.GetBinWidth(1)))+" "+unit
+            diff = self.unitBinning.getArray()[1]-self.unitBinning.getArray()[0]
+            if diff==1.0*int(diff):
+                self.yaxis.unit=" / "+str(int(diff))+" "+unit
             else:
-                self.yaxis.unit=" / "+str(round(unitAxis.GetBinWidth(1),2))+" "+unit
-        self.xaxis.applyStyle(rootXaxis)
-        self.yaxis.applyStyle(rootYaxis)
+                self.yaxis.unit=" / "+str(round(diff,2))+" "+unit
+        self.xaxis.applyStyle(rootGrid.GetXaxis())
+        self.yaxis.applyStyle(rootGrid.GetYaxis())
         
         
         

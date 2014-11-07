@@ -187,8 +187,13 @@ stack2j0t_mu=[
 
 
 if __name__=="__main__":
+    binning = EquiBinning(30,0,200)
+    cv=Canvas()
+    cv.setCoordinateStyle(CoordinateStyle(xtitle="MTW",ytitle="Events",unit="GeV",unitBinning=binning))
     for stack in stack2j1t_mu:
         stackweight=stack["weights"]
+
+        hist = Histogram1D.createEmpty(binning)
         for setName in stack["sets"]:
             print setName
             setInfo = setDict[setName]
@@ -202,13 +207,14 @@ if __name__=="__main__":
                 weightChain.AddFile(weightFiles[i])
             dataChain.AddFriend(weightChain)
             
-            hist = Histogram1D.projectFromTree(dataChain,"mtw",stackweight+"*"+setweight,EquiBinning(50,0,150))
-            cv=Canvas()
-            cv.addDrawable(hist)
-            cv.draw()
-            cv.wait()
-            break
-        break
+            temp = Histogram1D.projectFromTree(dataChain,"mtw",stackweight+"*"+setweight+"*(bdt_sig_bg>0.6)",binning)
+            hist.addHistogram(temp)
+            
+        
+        cv.addDrawable(hist)
+        
+    cv.draw()
+    cv.wait()
     #hist.setStyle(HistogramStyle.createFilled(2))
     '''    
 

@@ -7,7 +7,7 @@ class Canvas:
     def __init__(self):
         self._drawables=[]
     
-        self.rootCanvas=ROOT.TCanvas("canvas"+str(random.random()),"blub",700,600)
+        self.rootCanvas=ROOT.TCanvas("canvas"+str(random.random()),"",700,600)
         #for the canvas:
         self.rootCanvas.SetBorderMode(0)
         self.rootCanvas.SetFillColor(ROOT.kWhite)
@@ -72,6 +72,10 @@ class Canvas:
         ROOT.TGaxis.SetMaxDigits(3)
         
         self._coordinateStyle=CoordinateStyle()
+        self._grid=None
+        
+        self._constSpace={"xmin":0.0,"xmax":0.0,"ymin":0.0,"ymax":0.0}
+        self._factorSpace={"xmin":1.0,"xmax":1.0,"ymin":1.0,"ymax":1.1}
         
     def setCoordinateStyle(self,style):
         self._coordinateStyle=style
@@ -79,11 +83,33 @@ class Canvas:
     def addDrawable(self,drawable):
         self._drawables.append(drawable)
         
-    def draw(self):
-        for drawable in self._drawables:
-            drawable.draw()
+    def setConstSpace(self,key,value):
+        self._constSpace[key]=value
         
-        #self._coordinateStyle.applyStyle(self.rootCanvas)
+    def setFactorSpace(self,key,value):
+        self._factorSpace[key]=value
+    
+        
+    def draw(self):
+        boundingBox=None
+        for i in range(len(self._drawables)):
+            if self._drawables[i].hasAxis:
+                self._drawables[i].draw()
+                if boundingBox==None:
+                    boundingBox=self._drawables[i].getBoundingBox()
+                else:
+                    boundingBox.union(self._drawables[i].getBoundingBox())
+        self._grid=ROOT.TH2F("axis"+str(random.random()),"",
+            50,boundingBox.xmin*self._factorSpace["xmin"]-self._constSpace["xmin"],boundingBox.xmax*self._factorSpace["xmax"]+self._constSpace["xmax"],
+            50,boundingBox.ymin*self._factorSpace["ymin"]-self._constSpace["ymin"],boundingBox.ymax*self._factorSpace["ymax"]+self._constSpace["ymax"]
+        )
+        self._coordinateStyle.applyStyle(self._grid)
+        self._grid.Draw()
+        
+        for i in range(len(self._drawables)):
+            self._drawables[i].draw("SAME")
+        self._grid.Draw("SAME")
+        
         
     def wait(self):
         self.rootCanvas.Update()
