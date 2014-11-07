@@ -62,7 +62,7 @@ class Canvas:
         tdrStyle.SetPaperSize(20.,20.)
         tdrStyle.SetHatchesLineWidth(5)
         tdrStyle.SetHatchesSpacing(0.05)
-        tdrStyle.SetLineScalePS(1.2)
+        tdrStyle.SetLineScalePS(2)
         tdrStyle.SetEndErrorSize(2)
         tdrStyle.SetGridColor(1)
         tdrStyle.SetGridStyle(3)
@@ -104,14 +104,19 @@ class Canvas:
             50,boundingBox.ymin*self._factorSpace["ymin"]-self._constSpace["ymin"],boundingBox.ymax*self._factorSpace["ymax"]+self._constSpace["ymax"]
         )
         self._coordinateStyle.applyStyle(self._grid)
-        self._grid.Draw()
+        self._grid.Draw("AXIS")
         
         for i in range(len(self._drawables)):
             self._drawables[i].draw("SAME")
-        self._grid.Draw("SAME")
+        self._grid.Draw("AXIS SAME")
         
         
     def wait(self):
         self.rootCanvas.Update()
         self.rootCanvas.WaitPrimitive()
+        
+        
+class CanvasResiduen(Canvas):
+    def __init__(self,resSize=0.3,resRange=[-0.3,0.3]):
+        Canvas.__init__(self)
         

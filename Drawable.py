@@ -28,3 +28,6 @@ class Drawable:
         
     def getBoundingBox(self):
         raise NotImplemented
+        
+    def getLegendInfo(self):
+        raise NotImplemented

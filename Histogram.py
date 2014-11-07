@@ -14,11 +14,11 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         self.drawingOption=""
         
     @staticmethod
-    def createFilled(fillColor=1,fillStyle=1001):
+    def createFilled(fillColor=1,lineColor=1,fillStyle=1001):
         s = HistogramStyle()
-        s.lineColor=fillColor
-        s.lineStyle=0
-        s.lineWidth=0
+        s.lineColor=lineColor
+        s.lineStyle=1
+        s.lineWidth=2
         
         s.fillColor=fillColor
         s.fillStyle=fillStyle
@@ -27,7 +27,7 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         s.markerStyle=20
         s.markerSize=1.0
         
-        s.drawingOption="HIST"
+        s.drawingOption="HISTF"
         
         return s
         
@@ -45,12 +45,14 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         s.markerStyle=markerStyle
         s.markerSize=markerSize
         
-        s.drawingOption="P"
+        s.drawingOption="PEX0"
         
         return s
         
-    def applyStyle(self,histogram):
-        histogram.SetLineColor(self.lineColor)
+    def applyStyle(self,rootHistogram):
+        LineStyle.applyStyle(self,rootHistogram)
+        FillStyle.applyStyle(self,rootHistogram)
+        MarkerStyle.applyStyle(self,rootHistogram)
         
 class Binning:
     def getArray(self):
@@ -93,20 +95,29 @@ class Histogram1D(Drawable):
     def setStyle(self,style):
         self._style=style
         
+    def getStyle(self):
+        return self._style
+        
     def addHistogram(self,otherHistogram,scale=1.0):
         self._rootHistogram.Add(otherHistogram._rootHistogram,scale)
+        
+    def getRootHistogram(self):
+        return self._rootHistogram
         
     @staticmethod
     def createEmpty(binning):
         h = Histogram1D()
         h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
+        h._rootHistogram.Sumw2()
         h._binning=binning
         return h
         
     @staticmethod
     def projectFromTree(rootTree,varStr,cutStr,binning):
         h = Histogram1D()
+        
         h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
+        h._rootHistogram.Sumw2()
         h._binning=binning
         rootTree.Project(h._rootHistogram.GetName(),varStr,cutStr)
         return h
@@ -123,6 +134,9 @@ class Histogram1D(Drawable):
             self._rootHistogram.GetXaxis().GetXmax(),
             self._rootHistogram.GetMaximum() 
         )
+        
+    def getLegendInfo(self):
+        return None
         
         
 

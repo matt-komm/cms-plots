@@ -81,6 +81,12 @@ setDict = {
         "legend":{"entry":"WJets LF","draw":"F"},
         "weight":"(abs(ljet_id)!=5 && abs(bjet_id)!=5 && abs(sjet1_id)!=5 && abs(sjet2_id)!=5 && abs(ljet_id)!=4 && abs(bjet_id)!=4 && abs(sjet1_id)!=4 && abs(sjet2_id)!=4)"
     },
+    "WJetsExcl":{
+        "folders":["W1Jets_exclusive","W2Jets_exclusive","W3Jets_exclusive","W4Jets_exclusive"],
+        "style":ROOT.kTeal+2,
+        "legend":{"entry":"WJets","draw":"F"},
+        "weight":"1.0"
+    },
     "DiBoson":{
         "folders":["WW","WZ","ZZ"],
         "style":ROOT.kBlue,
@@ -103,8 +109,9 @@ setDict = {
 
 
 
+
 fitResultComp=[
-    {"sets":["DY","DiBoson","WJetsExclLF","WJetsExclCF","WJetsExclBF"],
+    {"sets":["DY","DiBoson","WJetsExclLF","WJetsExclCF","WJetsExclBF","WJetsExcl"],
     "weight":"1.24"},
     {"sets":["sChan","tWChan","TTJetsDi","TTJetsSemi"],
     "weight":"1.1"},
@@ -113,7 +120,7 @@ fitResultComp=[
 ]
 
 fitResultNuType=[
-    {"sets":["DY","DiBoson","WJetsExclLF","WJetsExclCF","WJetsExclBF"],
+    {"sets":["DY","DiBoson","WJetsExclLF","WJetsExclCF","WJetsExclBF","WJetsExcl"],
     "weight":"((nu_soltype<0.5)*1.06+(nu_soltype>0.5)*1.32)"},
     {"sets":["sChan","tWChan","TTJetsDi","TTJetsSemi"],
     "weight":"((nu_soltype<0.5)*1.09+(nu_soltype>0.5)*1.12)"},
@@ -121,7 +128,7 @@ fitResultNuType=[
     "weight":"((nu_soltype<0.5)*1.18+(nu_soltype>0.5)*1.2)"}
 ]
 
-applyFitResult(setDict,fitResultNuType)
+applyFitResult(setDict,fitResultComp)
 
 for sample in setDict.keys():
     setDict[sample]["files"]=[]
@@ -142,7 +149,7 @@ for sample in setDict.keys():
 
 stack2j1t_mu=[
     {
-        "sets":["DY","DiBoson","sChan","tWChan","TTJetsDi","TTJetsSemi","WJetsExclLF","WJetsExclCF","WJetsExclBF","tChanLeptons"],
+        "sets":["noTop","otherTop","signal"],
         "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
     },  
     {
@@ -153,7 +160,7 @@ stack2j1t_mu=[
 
 stack3j1t_mu=[
     {
-        "sets":["DY","DiBoson","sChan","tWChan","TTJetsDi","TTJetsSemi","WJetsExclLF","WJetsExclCF","WJetsExclBF","tChanLeptons"],
+        "sets":["noTop","otherTop","signal"],
         "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==3)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
     },  
     {
@@ -164,7 +171,7 @@ stack3j1t_mu=[
 
 stack3j2t_mu=[
     {
-        "sets":["DY","DiBoson","sChan","tWChan","TTJetsDi","TTJetsSemi","WJetsExclLF","WJetsExclCF","WJetsExclBF","tChanLeptons"],
+        "sets":["noTop","otherTop","signal"],
         "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==3)*(ntags==2)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
     },  
     {
@@ -175,7 +182,8 @@ stack3j2t_mu=[
 
 stack2j0t_mu=[
     {
-        "sets":["DY","DiBoson","sChan","tWChan","TTJetsDi","TTJetsSemi","WJetsExclLF","WJetsExclCF","WJetsExclBF","tChanLeptons"],
+        #"sets":["DY","DiBoson","sChan","tWChan","TTJetsDi","TTJetsSemi","WJetsExclLF","WJetsExclCF","WJetsExclBF","tChanLeptons"],
+        "sets":["noTop","otherTop","signal"],
         "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==0)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
     },  
     {
@@ -183,6 +191,52 @@ stack2j0t_mu=[
         "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==0)*(bdt_qcd>0.4)"
     }
 ]
+'''
+colorSignal=ROOT.TColor(300,1.00, 0.431, 0.027,"") 
+colorNoTop=ROOT.TColor(301,0.447, 0.914, 0.0,"") 
+
+colorOtherTop=ROOT.TColor(302,0.243, 0.322, 0.80,"") 
+colorQCD=ROOT.TColor(303,0.7,0.7,0.7,"") 
+'''
+
+colorSignal=ROOT.TColor(300,0.984, 0, 0.071,"") 
+colorSignalDark=ROOT.TColor(301,0.494, 0, 0.012,"") 
+colorOtherTop=ROOT.TColor(302,1.00, 0.58, 0.0,"") 
+colorOtherTopDark=ROOT.TColor(303,0.398, 0.24, 0,"") 
+colorNoTop=ROOT.TColor(304,0.031, 0.282, 0.816,"")
+colorNoTopDark=ROOT.TColor(305,0, 0.114, 0.333,"")
+colorQCD=ROOT.TColor(306,0.7,0.7,0.7,"") 
+colorQCDDark=ROOT.TColor(307,0.55,0.55,0.55,"") 
+
+combinedSets={
+    "signal":{
+        "sets":["tChanLeptons"],
+        "style":HistogramStyle.createFilled(colorSignal.GetNumber(),colorSignalDark.GetNumber()),
+        "legend":"t-chan. single top"
+    },
+    "otherTop":{
+        "sets":["sChan","tWChan","TTJetsDi","TTJetsSemi"],
+        "style":HistogramStyle.createFilled(colorOtherTop.GetNumber(),colorOtherTopDark.GetNumber()),
+        "legend":"other top"
+    },
+    "noTop":{
+        "sets":["DY","DiBoson","WJetsExcl"],
+        "style":HistogramStyle.createFilled(colorNoTop.GetNumber(),colorNoTopDark.GetNumber()),
+        "legend":"non resonant top"
+    },
+    "SingleMu":{
+        "sets":["SingleMu"],
+        "style":HistogramStyle.createMarkers(),
+        "legend":"data"
+    },
+    "SingleEle":{
+        "sets":["SingleEle"],
+        "style":HistogramStyle.createMarkers(),
+        "legend":"data"
+    }
+    
+}
+
 
 
 
@@ -190,28 +244,34 @@ if __name__=="__main__":
     binning = EquiBinning(30,0,200)
     cv=Canvas()
     cv.setCoordinateStyle(CoordinateStyle(xtitle="MTW",ytitle="Events",unit="GeV",unitBinning=binning))
-    for stack in stack2j1t_mu:
-        stackweight=stack["weights"]
-
-        hist = Histogram1D.createEmpty(binning)
-        for setName in stack["sets"]:
-            print setName
-            setInfo = setDict[setName]
-            setweight=setInfo["weight"]
-            dataFiles=setInfo["files"]
-            weightFiles=setInfo["weights"]
-            dataChain=ROOT.TChain("dataframe","data")
-            weightChain=ROOT.TChain("dataframe","weight")
-            for i in range(len(dataFiles)):
-                dataChain.AddFile(dataFiles[i])
-                weightChain.AddFile(weightFiles[i])
-            dataChain.AddFriend(weightChain)
-            
-            temp = Histogram1D.projectFromTree(dataChain,"mtw",stackweight+"*"+setweight+"*(bdt_sig_bg>0.6)",binning)
-            hist.addHistogram(temp)
+    
+    
+    for stackInfo in stack2j1t_mu:
+        stackweight=stackInfo["weights"]
+        stack=Stack()
+        for setName in stackInfo["sets"]:
+            setHist=Histogram1D.createEmpty(binning)
+            setHist.setStyle(combinedSets[setName]["style"])
+            for singleSet in combinedSets[setName]["sets"]:
+                print singleSet
+                setInfo = setDict[singleSet]
+                setweight=setInfo["weight"]
+                dataFiles=setInfo["files"]
+                weightFiles=setInfo["weights"]
+                dataChain=ROOT.TChain("dataframe","data")
+                weightChain=ROOT.TChain("dataframe","weight")
+                for i in range(len(dataFiles)):
+                    dataChain.AddFile(dataFiles[i])
+                    weightChain.AddFile(weightFiles[i])
+                dataChain.AddFriend(weightChain)
+                
+                temp = Histogram1D.projectFromTree(dataChain,"mtw",stackweight+"*"+setweight+"*(bdt_sig_bg>0.6)",binning)
+                setHist.addHistogram(temp)
+                
+            stack.addHistogram(setHist)
             
         
-        cv.addDrawable(hist)
+        cv.addDrawable(stack)
         
     cv.draw()
     cv.wait()
