@@ -2,6 +2,8 @@ from Canvas import *
 from Histogram import *
 from Stack import *
 from Axis import *
+from InfoText import *
+from Position import *
 
 import os
 
@@ -191,7 +193,7 @@ stack2j0t_mu=[
         "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==0)*(bdt_qcd>0.4)"
     }
 ]
-'''
+
 colorSignal=ROOT.TColor(300,0.984, 0, 0.071,"") 
 colorSignalDark=ROOT.TColor(301,0.494, 0, 0.012,"") 
 colorOtherTop=ROOT.TColor(302,1.00, 0.58, 0.0,"") 
@@ -200,7 +202,7 @@ colorNoTop=ROOT.TColor(304,0.031, 0.282, 0.816,"")
 colorNoTopDark=ROOT.TColor(305,0, 0.114, 0.333,"")
 colorQCD=ROOT.TColor(306,0.7,0.7,0.7,"") 
 colorQCDDark=ROOT.TColor(307,0.55,0.55,0.55,"") 
-'''
+
 '''
 colorSignal=ROOT.TColor(300,1.00, 0.192, 0,"") 
 colorSignalDark=ROOT.TColor(301,0.498, 0.094, 0,"") 
@@ -211,7 +213,7 @@ colorNoTopDark=ROOT.TColor(305,0.153, 0, 0.337,"")
 colorQCD=ROOT.TColor(306,0.7,0.7,0.7,"") 
 colorQCDDark=ROOT.TColor(307,0.55,0.55,0.55,"") 
 '''
-
+'''
 colorSignal=ROOT.TColor(300,236/255.0,208/255.0,120/255.0,"") 
 colorSignalDark=ROOT.TColor(301,colorSignal.GetRed()*0.5, colorSignal.GetGreen()*0.5, colorSignal.GetBlue()*0.5,"") 
 colorOtherTop=ROOT.TColor(302,192/255.0,41/255.0,66/255.0,"") 
@@ -220,7 +222,7 @@ colorNoTop=ROOT.TColor(304,83/255.0,119/255.0,122/255.0,"")
 colorNoTopDark=ROOT.TColor(305,colorNoTop.GetRed()*0.5, colorNoTop.GetGreen()*0.5, colorNoTop.GetBlue()*0.5,"")
 colorQCD=ROOT.TColor(306,0.7,0.7,0.7,"") 
 colorQCDDark=ROOT.TColor(307,0.55,0.55,0.55,"") 
-
+'''
 combinedSets={
     "signal":{
         "sets":["tChanLeptons"],
@@ -255,11 +257,11 @@ combinedSets={
 
 if __name__=="__main__":
     #ROOT.gROOT.SetBatch(True)
-    binning = EquiBinning(12,-1,1)
+    binning = EquiBinning(20,-1,1)
     cv=Canvas()
     cv.setCoordinateStyle(CoordinateStyle(xtitle="cos #theta",ytitle="Events",unit="",unitBinning=binning,xscale=cv.getPtInPx(),yscale=cv.getPtInPx()))
     
-    legend=Legend(scale=cv.getPtInPx())
+    legend=Legend(scale=cv.getPtInPx(),position=Position.Legend.LEFT_SIDEWAYS)
     for stackInfo in stack2j1t_mu:
         stackweight=stackInfo["weights"]
         stack=Stack()
@@ -291,7 +293,8 @@ if __name__=="__main__":
         
         cv.addDrawable(stack)
     cv.addDrawable(legend)
-        
+    cv.addDrawable(InfoText.createCMSText(orientation=InfoText.SIDEWAYS,position=Position.CMSText.LEFT_SIDEWAYS,scale=cv.getPtInPx()))
+    cv.addDrawable(InfoText.createLumiText(scale=cv.getPtInPx()))
     cv.draw()
     cv.wait()
     #hist.setStyle(HistogramStyle.createFilled(2))

@@ -54,10 +54,10 @@ class Canvas:
 
 
         # Margins:
-        self.rootCanvas.SetTopMargin(0.06)
+        self.rootCanvas.SetTopMargin(0.065)
         self.rootCanvas.SetBottomMargin(0.14)
         self.rootCanvas.SetLeftMargin(0.16)
-        self.rootCanvas.SetRightMargin(0.085)
+        self.rootCanvas.SetRightMargin(0.055)
 
         # For the Global title:
 
@@ -91,6 +91,7 @@ class Canvas:
         tdrStyle.SetGridWidth(1)
         tdrStyle.cd()
         ROOT.TGaxis.SetExponentOffset(0.0,0.0,"XY")
+        ROOT.TGaxis.SetExponentOffset(0.0,0.007,"Y")
         ROOT.TGaxis.SetMaxDigits(3)
         
         self._coordinateStyle=CoordinateStyle()

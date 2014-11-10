@@ -50,6 +50,7 @@ class CoordinateStyle:
         
         self.xaxis.titleOffset=1.0
         self.xaxis.ndiv=505
+        self.xaxis.exponent=False
         self.yaxis.titleOffset=1.25
         
         self.unitBinning=unitBinning

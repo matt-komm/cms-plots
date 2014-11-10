@@ -1,4 +1,5 @@
 from Drawable import *
+from Position import *
 
 import ROOT
 
@@ -11,14 +12,14 @@ class LegendEntry:
         self.priority=priority
         
 class Legend(Drawable):
-    def __init__(self,scale=1.0):
+    def __init__(self,position=Position.Legend.LEFT_SIDEWAYS,scale=1.0):
         Drawable.__init__(self,hasAxis=False,allowLayout=True)
         self.scale=scale
-        self.textsize=11
-        self._xmin=0.2
-        self._xmax=0.45
-        self._ymin=0.65
-        self._ymax=0.9
+        self.textsize=10
+        self._xmin=position.xmin
+        self._xmax=position.xmax
+        self._ymin=position.ymin
+        self._ymax=position.ymax
         self._legendEntries=[]
         
     def addEntry(self,legendEntry):
@@ -29,6 +30,7 @@ class Legend(Drawable):
         self._legend.SetFillColor(0)
         self._legend.SetBorderSize(0)
         self._legend.SetTextFont(43)
+        self._legend.SetTextAlign(13)
         self._legend.SetTextSize(self.textsize*self.scale)
         for entry in reversed(sorted(self._legendEntries,cmp=lambda x,y: x.priority-y.priority)):
             self._legend.AddEntry(entry.rootObj,entry.title,entry.drawOptions)
