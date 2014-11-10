@@ -14,14 +14,14 @@ class Stack(Drawable):
         histogram.getStyle().applyStyle(histogram.getRootHistogram())
         self._rootStack.Add(histogram.getRootHistogram(),histogram.getStyle().drawingOption)
         
-    def draw(self,addOptions=""):
+    def draw(self,canvas,addOptions=""):
         self._rootStack.Draw(addOptions)
         
     def getBoundingBox(self):
         return BoundingBox(
             BoundingBox.COORDINATES,
             self._rootStack.GetXaxis().GetXmin(),
-            self._rootStack.GetMinimum(),
+            0.0,
             self._rootStack.GetXaxis().GetXmax(),
             self._rootStack.GetMaximum() 
         )

@@ -192,13 +192,6 @@ stack2j0t_mu=[
     }
 ]
 '''
-colorSignal=ROOT.TColor(300,1.00, 0.431, 0.027,"") 
-colorNoTop=ROOT.TColor(301,0.447, 0.914, 0.0,"") 
-
-colorOtherTop=ROOT.TColor(302,0.243, 0.322, 0.80,"") 
-colorQCD=ROOT.TColor(303,0.7,0.7,0.7,"") 
-'''
-
 colorSignal=ROOT.TColor(300,0.984, 0, 0.071,"") 
 colorSignalDark=ROOT.TColor(301,0.494, 0, 0.012,"") 
 colorOtherTop=ROOT.TColor(302,1.00, 0.58, 0.0,"") 
@@ -207,32 +200,52 @@ colorNoTop=ROOT.TColor(304,0.031, 0.282, 0.816,"")
 colorNoTopDark=ROOT.TColor(305,0, 0.114, 0.333,"")
 colorQCD=ROOT.TColor(306,0.7,0.7,0.7,"") 
 colorQCDDark=ROOT.TColor(307,0.55,0.55,0.55,"") 
+'''
+'''
+colorSignal=ROOT.TColor(300,1.00, 0.192, 0,"") 
+colorSignalDark=ROOT.TColor(301,0.498, 0.094, 0,"") 
+colorOtherTop=ROOT.TColor(302,1.00, 0.839, 0,"") 
+colorOtherTopDark=ROOT.TColor(303,0.498, 0.42, 0,"") 
+colorNoTop=ROOT.TColor(304,0.463, 0.149, 0.859,"")
+colorNoTopDark=ROOT.TColor(305,0.153, 0, 0.337,"")
+colorQCD=ROOT.TColor(306,0.7,0.7,0.7,"") 
+colorQCDDark=ROOT.TColor(307,0.55,0.55,0.55,"") 
+'''
+
+colorSignal=ROOT.TColor(300,236/255.0,208/255.0,120/255.0,"") 
+colorSignalDark=ROOT.TColor(301,colorSignal.GetRed()*0.5, colorSignal.GetGreen()*0.5, colorSignal.GetBlue()*0.5,"") 
+colorOtherTop=ROOT.TColor(302,192/255.0,41/255.0,66/255.0,"") 
+colorOtherTopDark=ROOT.TColor(303,colorOtherTop.GetRed()*0.5, colorOtherTop.GetGreen()*0.5, colorOtherTop.GetBlue()*0.5,"") 
+colorNoTop=ROOT.TColor(304,83/255.0,119/255.0,122/255.0,"")
+colorNoTopDark=ROOT.TColor(305,colorNoTop.GetRed()*0.5, colorNoTop.GetGreen()*0.5, colorNoTop.GetBlue()*0.5,"")
+colorQCD=ROOT.TColor(306,0.7,0.7,0.7,"") 
+colorQCDDark=ROOT.TColor(307,0.55,0.55,0.55,"") 
 
 combinedSets={
     "signal":{
         "sets":["tChanLeptons"],
         "style":HistogramStyle.createFilled(colorSignal.GetNumber(),colorSignalDark.GetNumber()),
-        "legend":"t-chan. single top"
+        "legend":LegendEntry(title="SM signal",drawOptions="F",priority=0)
     },
     "otherTop":{
         "sets":["sChan","tWChan","TTJetsDi","TTJetsSemi"],
         "style":HistogramStyle.createFilled(colorOtherTop.GetNumber(),colorOtherTopDark.GetNumber()),
-        "legend":"other top"
+        "legend":LegendEntry(title="other top",drawOptions="F",priority=0)
     },
     "noTop":{
         "sets":["DY","DiBoson","WJetsExcl"],
         "style":HistogramStyle.createFilled(colorNoTop.GetNumber(),colorNoTopDark.GetNumber()),
-        "legend":"non resonant top"
+        "legend":LegendEntry(title="EWK",drawOptions="F",priority=0)
     },
     "SingleMu":{
         "sets":["SingleMu"],
         "style":HistogramStyle.createMarkers(),
-        "legend":"data"
+        "legend":LegendEntry(title="data",drawOptions="PE",priority=10)
     },
     "SingleEle":{
         "sets":["SingleEle"],
         "style":HistogramStyle.createMarkers(),
-        "legend":"data"
+        "legend":LegendEntry(title="data",drawOptions="PE",priority=10)
     }
     
 }
@@ -241,17 +254,21 @@ combinedSets={
 
 
 if __name__=="__main__":
-    binning = EquiBinning(30,0,200)
+    #ROOT.gROOT.SetBatch(True)
+    binning = EquiBinning(12,-1,1)
     cv=Canvas()
-    cv.setCoordinateStyle(CoordinateStyle(xtitle="MTW",ytitle="Events",unit="GeV",unitBinning=binning))
+    cv.setCoordinateStyle(CoordinateStyle(xtitle="cos #theta",ytitle="Events",unit="",unitBinning=binning,xscale=cv.getPtInPx(),yscale=cv.getPtInPx()))
     
-    
+    legend=Legend(scale=cv.getPtInPx())
     for stackInfo in stack2j1t_mu:
         stackweight=stackInfo["weights"]
         stack=Stack()
         for setName in stackInfo["sets"]:
             setHist=Histogram1D.createEmpty(binning)
             setHist.setStyle(combinedSets[setName]["style"])
+            legendEntry=combinedSets[setName]["legend"]
+            legendEntry.rootObj=setHist.getRootHistogram()
+            legend.addEntry(legendEntry)
             for singleSet in combinedSets[setName]["sets"]:
                 print singleSet
                 setInfo = setDict[singleSet]
@@ -263,15 +280,17 @@ if __name__=="__main__":
                 for i in range(len(dataFiles)):
                     dataChain.AddFile(dataFiles[i])
                     weightChain.AddFile(weightFiles[i])
+                    #break
                 dataChain.AddFriend(weightChain)
                 
-                temp = Histogram1D.projectFromTree(dataChain,"mtw",stackweight+"*"+setweight+"*(bdt_sig_bg>0.6)",binning)
+                temp = Histogram1D.projectFromTree(dataChain,"cos_theta_lj",stackweight+"*"+setweight+"*(bdt_sig_bg>0.6)",binning)
                 setHist.addHistogram(temp)
                 
             stack.addHistogram(setHist)
             
         
         cv.addDrawable(stack)
+    cv.addDrawable(legend)
         
     cv.draw()
     cv.wait()

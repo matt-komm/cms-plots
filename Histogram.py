@@ -1,6 +1,7 @@
 from Style import *
 from Task import *
 from Drawable import *
+from Legend import *
 
 import ROOT
 import numpy
@@ -24,19 +25,19 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         s.fillStyle=fillStyle
         
         s.markerColor=1
-        s.markerStyle=20
-        s.markerSize=1.0
+        s.markerStyle=0
+        s.markerSize=0
         
         s.drawingOption="HISTF"
         
         return s
         
     @staticmethod
-    def createMarkers(markerColor=1,markerStyle=20,markerSize=1.0):
+    def createMarkers(markerColor=1,markerStyle=20,markerSize=1.15):
         s = HistogramStyle()
         s.lineColor=markerColor
-        s.lineStyle=0
-        s.lineWidth=0
+        s.lineStyle=1
+        s.lineWidth=1
         
         s.fillColor=0
         s.fillStyle=0
@@ -91,12 +92,21 @@ class Histogram1D(Drawable):
         self._style=HistogramStyle()
         self._binning=None
         self._rootHistogram=None
+        self._legend=None
         
     def setStyle(self,style):
         self._style=style
         
     def getStyle(self):
         return self._style
+        
+    def setLegend(self,title,drawOptions,addtitle="",priority=0):
+        self._legend=LegendEntry()
+        self._legend.title=title
+        self._legend.addtitle=addtitle
+        self._legend.rootObj=self._rootHistogram
+        self._legend.drawOptions=drawOptions
+        self._legend.priority=priority
         
     def addHistogram(self,otherHistogram,scale=1.0):
         self._rootHistogram.Add(otherHistogram._rootHistogram,scale)
@@ -122,7 +132,7 @@ class Histogram1D(Drawable):
         rootTree.Project(h._rootHistogram.GetName(),varStr,cutStr)
         return h
         
-    def draw(self,addOptions=""):
+    def draw(self,canvas,addOptions=""):
         self._style.applyStyle(self._rootHistogram)
         self._rootHistogram.Draw(self._style.drawingOption+addOptions)
         
@@ -130,13 +140,15 @@ class Histogram1D(Drawable):
         return BoundingBox(
             BoundingBox.COORDINATES,
             self._rootHistogram.GetXaxis().GetXmin(),
-            self._rootHistogram.GetMinimum(),
+            0.0,
             self._rootHistogram.GetXaxis().GetXmax(),
             self._rootHistogram.GetMaximum() 
         )
         
     def getLegendInfo(self):
-        return None
-        
+        if self._legend!=None:
+            return [self._legend]
+        else:
+            return []
         
 

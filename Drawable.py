@@ -23,7 +23,7 @@ class Drawable:
         self.hasAxis=hasAxis
         self.allowLayout=allowLayout
         
-    def draw(self,addOptions=""):
+    def draw(self,canvas,addOptions=""):
         raise NotImplemented
         
     def getBoundingBox(self):

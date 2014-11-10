@@ -4,10 +4,32 @@ import ROOT
 from Axis import *
 
 class Canvas:
-    def __init__(self):
+    def __init__(self, widthCM=7.3,heightCM=6.0):
+        self.widthCM=widthCM
+        self.heightCM=heightCM
+        
+                
+        #by default canvasSize=20x20cm
+        
+        self.widthPx=800
+        self.heightPx=800
+        
+        if self.widthCM<self.heightCM:
+            self.widthPx=int(round(1.0*self.widthPx*self.widthCM/self.heightCM))
+        else:
+            self.heightPx=int(round(1.0*self.heightPx*self.heightCM/self.widthCM))
+        
+        
+        
         self._drawables=[]
-    
-        self.rootCanvas=ROOT.TCanvas("canvas"+str(random.random()),"",700,600)
+        
+        self.rootCanvas=ROOT.TCanvas("canvas"+str(random.random()),"",self.widthPx,self.heightPx)
+        if (ROOT.gROOT.IsBatch()):
+            self.rootCanvas.SetCanvasSize(self.widthPx,self.heightPx)
+        else:
+            self.rootCanvas.SetWindowSize(self.widthPx + (self.widthPx - self.rootCanvas.GetWw()), self.heightPx + (self.heightPx - self.rootCanvas.GetWh()))
+        
+        
         #for the canvas:
         self.rootCanvas.SetBorderMode(0)
         self.rootCanvas.SetFillColor(ROOT.kWhite)
@@ -59,7 +81,7 @@ class Canvas:
         tdrStyle.SetOptDate(0)
         tdrStyle.SetOptFile(0)
         tdrStyle.SetStripDecimals(True)
-        tdrStyle.SetPaperSize(20.,20.)
+        tdrStyle.SetPaperSize(self.widthCM,self.heightCM) #sets size in cm
         tdrStyle.SetHatchesLineWidth(5)
         tdrStyle.SetHatchesSpacing(0.05)
         tdrStyle.SetLineScalePS(2)
@@ -77,6 +99,12 @@ class Canvas:
         self._constSpace={"xmin":0.0,"xmax":0.0,"ymin":0.0,"ymax":0.0}
         self._factorSpace={"xmin":1.0,"xmax":1.0,"ymin":1.0,"ymax":1.1}
         
+        #print self.rootCanvas.GetXsizeReal(),self.rootCanvas.GetYsizeReal()
+        
+    def getPtInPx(self,pt=1.0):
+        # 1pT=1/72in, 1in=2.54cm, page=20cm height
+        return pt/72.0*2.54/20.0*self.heightPx*20.0/self.heightCM #*0.93376068 #for TT fonts
+        
     def setCoordinateStyle(self,style):
         self._coordinateStyle=style
         
@@ -91,10 +119,11 @@ class Canvas:
     
         
     def draw(self):
+        self.rootCanvas.cd()
         boundingBox=None
         for i in range(len(self._drawables)):
             if self._drawables[i].hasAxis:
-                self._drawables[i].draw()
+                self._drawables[i].draw(self)
                 if boundingBox==None:
                     boundingBox=self._drawables[i].getBoundingBox()
                 else:
@@ -107,9 +136,9 @@ class Canvas:
         self._grid.Draw("AXIS")
         
         for i in range(len(self._drawables)):
-            self._drawables[i].draw("SAME")
+            self._drawables[i].draw(self,"SAME")
         self._grid.Draw("AXIS SAME")
-        
+        #self.rootCanvas.Print("test4.pdf")
         
     def wait(self):
         self.rootCanvas.Update()

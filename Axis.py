@@ -5,14 +5,14 @@ class AxisStyle:
         self.title=title
         self.unit=""
         
-        self.titleSize=0.06
+        self.titleSize=11
         self.titleOffset=1
-        self.titleFont=42
+        self.titleFont=43
         self.titleColor=1
         
-        self.labelSize=0.05
+        self.labelSize=9
         self.labelOffset=0.015
-        self.labelFont=42
+        self.labelFont=43
         self.labelColor=1
         
         self.tickLength=0.03 
@@ -27,11 +27,13 @@ class AxisStyle:
             rootAxis.SetTitle(self.title+self.unit)
             
         rootAxis.SetTitleSize(self.titleSize*self.scale)
-        rootAxis.SetTitleOffset(self.titleOffset*self.scale)
+        rootAxis.SetTitleOffset(self.titleOffset)
+        rootAxis.SetTitleFont(self.titleFont)
         rootAxis.SetTitleColor(self.titleColor)
         
+        
         rootAxis.SetLabelSize(self.labelSize*self.scale)
-        rootAxis.SetLabelOffset(self.labelOffset*self.scale)
+        rootAxis.SetLabelOffset(self.labelOffset)
         rootAxis.SetLabelFont(self.labelFont)
         rootAxis.SetLabelColor(self.labelColor)
         
@@ -46,11 +48,16 @@ class CoordinateStyle:
         self.xaxis=AxisStyle(xtitle,xscale)
         self.yaxis=AxisStyle(ytitle,yscale)
         
-        self.xaxis.titleOffset=1.05
-        self.yaxis.titleOffset=1.3
+        self.xaxis.titleOffset=1.0
+        self.xaxis.ndiv=505
+        self.yaxis.titleOffset=1.25
         
         self.unitBinning=unitBinning
         self.unit=unit
+        
+    def setScale(self,scale=1):
+        self.xaxis.scale=scale
+        self.yaxis.scale=scale
         
     def applyStyle(self,rootGrid):
         unit=""
