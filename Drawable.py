@@ -1,3 +1,12 @@
+class Strech:
+    def __init__(self):
+        self.xminStrech=1.0
+        self.yminStrech=1.0
+        self.xmaxStrech=1.0
+        self.ymaxStrech=1.0
+        self.fontStrech=1.0
+        
+        
 class BoundingBox:
     COORDINATES,PERCENTS=range(2)
     def __init__(self,boxType,x1=0,y1=0,x2=0,y2=0):
@@ -23,7 +32,7 @@ class Drawable:
         self.hasAxis=hasAxis
         self.allowLayout=allowLayout
         
-    def draw(self,canvas,addOptions=""):
+    def draw(self,canvas,strech=Strech(),addOptions=""):
         raise NotImplemented
         
     def getBoundingBox(self):

@@ -12,9 +12,8 @@ class LegendEntry:
         self.priority=priority
         
 class Legend(Drawable):
-    def __init__(self,position=Position.Legend.LEFT_SIDEWAYS,scale=1.0):
+    def __init__(self,position=Position.Legend.LEFT_SIDEWAYS):
         Drawable.__init__(self,hasAxis=False,allowLayout=True)
-        self.scale=scale
         self.textsize=10
         self._xmin=position.xmin
         self._xmax=position.xmax
@@ -25,13 +24,13 @@ class Legend(Drawable):
     def addEntry(self,legendEntry):
         self._legendEntries.append(legendEntry)
         
-    def draw(self,canvas,addOptions=""):
-        self._legend=ROOT.TLegend(self._xmin,self._ymin,self._xmax,self._ymax)
+    def draw(self,canvas,strech=Strech(),addOptions=""):
+        self._legend=ROOT.TLegend(self._xmin*strech.xminStrech,self._ymin*strech.yminStrech,self._xmax*strech.xmaxStrech,self._ymax*strech.ymaxStrech)
         self._legend.SetFillColor(0)
         self._legend.SetBorderSize(0)
         self._legend.SetTextFont(43)
         self._legend.SetTextAlign(13)
-        self._legend.SetTextSize(self.textsize*self.scale)
+        self._legend.SetTextSize(self.textsize*strech.fontStrech)
         for entry in reversed(sorted(self._legendEntries,cmp=lambda x,y: x.priority-y.priority)):
             self._legend.AddEntry(entry.rootObj,entry.title,entry.drawOptions)
             if entry.addtitle!="":

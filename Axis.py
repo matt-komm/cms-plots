@@ -1,9 +1,12 @@
 class AxisStyle:
-    def __init__(self,title="",scale=1.0):
-        self.scale=scale
-    
+    def __init__(self,title="",fontScale=1.0,offsetScale=1.0,thickScale=1.0):
+        self.fontScale=fontScale
+        self.offsetScale=offsetScale
+        self.thickScale=thickScale
         self.title=title
         self.unit=""
+        
+        self.enableUnit=True
         
         self.titleSize=11
         self.titleOffset=1
@@ -15,38 +18,49 @@ class AxisStyle:
         self.labelFont=43
         self.labelColor=1
         
-        self.tickLength=0.03 
+        self.ownLabels=[]
+        
+        self.tickLength=0.02 
         self.ndiv=510
         self.exponent=True
         
         
     def applyStyle(self,rootAxis):
+        title = ""
         if self.title=="":
-            rootAxis.SetTitle(rootAxis.GetTitle()+self.unit)
+            title +=rootAxis.GetTitle()
         else:
-            rootAxis.SetTitle(self.title+self.unit)
-            
-        rootAxis.SetTitleSize(self.titleSize*self.scale)
-        rootAxis.SetTitleOffset(self.titleOffset)
+            title +=self.title
+        if self.enableUnit:
+            title+=self.unit
+        
+        rootAxis.SetTitle(title)    
+        
+        rootAxis.SetTitleSize(self.titleSize*self.fontScale)
+        rootAxis.SetTitleOffset(self.titleOffset*self.offsetScale)
         rootAxis.SetTitleFont(self.titleFont)
         rootAxis.SetTitleColor(self.titleColor)
         
         
-        rootAxis.SetLabelSize(self.labelSize*self.scale)
-        rootAxis.SetLabelOffset(self.labelOffset)
+        rootAxis.SetLabelSize(self.labelSize*self.fontScale)
+        rootAxis.SetLabelOffset(self.labelOffset*self.offsetScale)
         rootAxis.SetLabelFont(self.labelFont)
         rootAxis.SetLabelColor(self.labelColor)
         
-        rootAxis.SetTickLength(self.tickLength)
+        if len(self.ownLabels)>0:
+            for i,label in enumerate(self.ownLabels):
+                rootAxis.SetBinLabel(i,label)
+        
+        rootAxis.SetTickLength(self.tickLength*self.thickScale)
         rootAxis.SetNdivisions(self.ndiv)
         rootAxis.SetNoExponent(not self.exponent)
         rootAxis.SetDecimals(True)
         
         
 class CoordinateStyle:
-    def __init__(self,xtitle="",ytitle="",unitBinning=None,unit="",xscale=1,yscale=1):
-        self.xaxis=AxisStyle(xtitle,xscale)
-        self.yaxis=AxisStyle(ytitle,yscale)
+    def __init__(self,xtitle="",ytitle="",unitBinning=None,unit="",fontScale=1):
+        self.xaxis=AxisStyle(xtitle,fontScale)
+        self.yaxis=AxisStyle(ytitle,fontScale)
         
         self.xaxis.titleOffset=1.0
         self.xaxis.ndiv=505
@@ -56,9 +70,9 @@ class CoordinateStyle:
         self.unitBinning=unitBinning
         self.unit=unit
         
-    def setScale(self,scale=1):
-        self.xaxis.scale=scale
-        self.yaxis.scale=scale
+    def setFontScale(self,fontScale=1):
+        self.xaxis.fontScale=fontScale
+        self.yaxis.fontScale=fontScale
         
     def applyStyle(self,rootGrid):
         unit=""
@@ -75,6 +89,7 @@ class CoordinateStyle:
                 self.yaxis.unit=" / "+str(round(diff,2))+" "+unit
         self.xaxis.applyStyle(rootGrid.GetXaxis())
         self.yaxis.applyStyle(rootGrid.GetYaxis())
+        
         
         
         

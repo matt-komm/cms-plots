@@ -1,5 +1,4 @@
 from Style import *
-from Task import *
 from Drawable import *
 from Legend import *
 
@@ -19,7 +18,7 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         s = HistogramStyle()
         s.lineColor=lineColor
         s.lineStyle=1
-        s.lineWidth=2
+        s.lineWidth=1
         
         s.fillColor=fillColor
         s.fillStyle=fillStyle
@@ -111,8 +110,14 @@ class Histogram1D(Drawable):
     def addHistogram(self,otherHistogram,scale=1.0):
         self._rootHistogram.Add(otherHistogram._rootHistogram,scale)
         
+    def divideHistogram(self,otherHistogram):
+        self._rootHistogram.Divide(otherHistogram._rootHistogram)
+        
     def getRootHistogram(self):
         return self._rootHistogram
+        
+    def getBinning(self):
+        return self._binning
         
     @staticmethod
     def createEmpty(binning):
@@ -132,7 +137,7 @@ class Histogram1D(Drawable):
         rootTree.Project(h._rootHistogram.GetName(),varStr,cutStr)
         return h
         
-    def draw(self,canvas,addOptions=""):
+    def draw(self,canvas,strech=Strech(),addOptions=""):
         self._style.applyStyle(self._rootHistogram)
         self._rootHistogram.Draw(self._style.drawingOption+addOptions)
         
