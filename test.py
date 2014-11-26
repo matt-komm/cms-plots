@@ -5,7 +5,7 @@ from Axis import *
 from InfoText import *
 from Position import *
 
-import os
+import os, sys
 
 import ROOT
 
@@ -17,92 +17,116 @@ def applyFitResult(setDict,fitResults):
 
 setDict = {
     "tChan":{
-        "folders":["T_t","Tbar_t"],
+        "folders":["iso/nominal/T_t","iso/nominal/Tbar_t"],
         "style":ROOT.kMagenta,
         "legend":{"entry":"tChan","draw":"F"},
-        "weight":"1.0"
+        "weight":"xsweight"
     },
     "tChanLeptons":{
-        "folders":["T_t_ToLeptons","Tbar_t_ToLeptons"],
+        "folders":["iso/nominal/T_t_ToLeptons","iso/nominal/Tbar_t_ToLeptons"],
         "style":ROOT.kMagenta,
         "legend":{"entry":"tChan","draw":"F"},
-        "weight":"1.0"
+        "weight":"xsweight"
     },
     
     "DY":{
-        "folders":["DYJets"],
+        "folders":["iso/nominal/DYJets"],
         "style":ROOT.kViolet+1,
         "legend":{"entry":"DY","draw":"F"},
-        "weight":"1.0"
+        "weight":"xsweight"
     },
     "sChan":{
-        "folders":["T_s","Tbar_s"],
+        "folders":["iso/nominal/T_s","iso/nominal/Tbar_s"],
         "style":ROOT.kYellow,
         "legend":{"entry":"sChan","draw":"F"},
-        "weight":"1.0"
+        "weight":"xsweight"
     },
     "tWChan":{
-        "folders":["T_tW","Tbar_tW"],
+        "folders":["iso/nominal/T_tW","iso/nominal/Tbar_tW"],
         "style":ROOT.kYellow,
         "legend":{"entry":"tWChan","draw":"F"},
-        "weight":"1."
+        "weight":"xsweight"
     },
     "TTJetsDi":{
-        "folders":["TTJets_FullLept"],
+        "folders":["iso/nominal/TTJets_FullLept"],
         "style":ROOT.kOrange+10,
         "legend":{"entry":"TTJets l+l","draw":"F"},
-        "weight":"(top_weight)"
+        "weight":"(top_weight*xsweight)"
     },
     "TTJetsSemi":{
-        "folders":["TTJets_SemiLept"],
+        "folders":["iso/nominal/TTJets_SemiLept"],
         "style":ROOT.kRed,
         "legend":{"entry":"TTJets l+j","draw":"F"},
-        "weight":"(top_weight)"
+        "weight":"(top_weight*xsweight)"
     },
     "TTJetsFull":{
-        "folders":["TTJets_MassiveBinDECAY"],
+        "folders":["iso/nominal/TTJets_MassiveBinDECAY"],
         "style":ROOT.kOrange-3,
         "legend":{"entry":"TTJets","draw":"F"},
-        "weight":"(top_weight)"
+        "weight":"(top_weight*xsweight)"
     },
     "WJetsExclBF":{
-        "folders":["W1Jets_exclusive","W2Jets_exclusive","W3Jets_exclusive","W4Jets_exclusive"],
+        "folders":["iso/nominal/W1JetsToLNu","iso/nominal/W2JetsToLNu","iso/nominal/W3JetsToLNu","iso/nominal/W4JetsToLNu"],
         "style":ROOT.kGreen+2,
         "legend":{"entry":"WJets Xb","draw":"F"},
         "weight":"(abs(ljet_id)==5 || abs(bjet_id)==5 || abs(sjet1_id)==5 || abs(sjet2_id)==5)"
     },
     "WJetsExclCF":{
-        "folders":["W1Jets_exclusive","W2Jets_exclusive","W3Jets_exclusive","W4Jets_exclusive"],
+        "folders":["iso/nominal/W1JetsToLNu","iso/nominal/W2JetsToLNu","iso/nominal/W3JetsToLNu","iso/nominal/W4JetsToLNu"],
         "style":ROOT.kGreen-4,
         "legend":{"entry":"WJets Xc","draw":"F"},
         "weight":"((abs(ljet_id)!=5 && abs(bjet_id)!=5 && abs(sjet1_id)!=5 && abs(sjet2_id)!=5) && (abs(ljet_id)==4 || abs(bjet_id)==4 || abs(sjet1_id)==4 || abs(sjet2_id)==4))"
     },
     "WJetsExclLF":{
-        "folders":["W1Jets_exclusive","W2Jets_exclusive","W3Jets_exclusive","W4Jets_exclusive"],
+        "folders":["iso/nominal/W1JetsToLNu","iso/nominal/W2JetsToLNu","iso/nominal/W3JetsToLNu","iso/nominal/W4JetsToLNu"],
         "style":ROOT.kTeal+2,
         "legend":{"entry":"WJets LF","draw":"F"},
         "weight":"(abs(ljet_id)!=5 && abs(bjet_id)!=5 && abs(sjet1_id)!=5 && abs(sjet2_id)!=5 && abs(ljet_id)!=4 && abs(bjet_id)!=4 && abs(sjet1_id)!=4 && abs(sjet2_id)!=4)"
     },
     "WJetsExcl":{
-        "folders":["W1Jets_exclusive","W2Jets_exclusive","W3Jets_exclusive","W4Jets_exclusive"],
+        "folders":["iso/nominal/W1JetsToLNu","iso/nominal/W2JetsToLNu2","iso/nominal/W3JetsToLNu2","iso/nominal/W4JetsToLNu2"],
         "style":ROOT.kTeal+2,
         "legend":{"entry":"WJets","draw":"F"},
-        "weight":"1.0"
+        "weight":"xsweight"
+    },
+    "WJetsExcl1":{
+        "folders":["iso/nominal/W1JetsToLNu"],
+        "style":ROOT.kTeal+2,
+        "legend":{"entry":"WJets","draw":"F"},
+        "weight":"0.0003464"
+    },
+    "WJetsExcl2":{
+        "folders":["iso/nominal/W2JetsToLNu"],
+        "style":ROOT.kTeal+2,
+        "legend":{"entry":"WJets","draw":"F"},
+        "weight":"3.559e-05"
+    },
+    "WJetsExcl3":{
+        "folders":["iso/nominal/W3JetsToLNu"],
+        "style":ROOT.kTeal+2,
+        "legend":{"entry":"WJets","draw":"F"},
+        "weight":"2.695e-05"
+    },
+    "WJetsExcl4":{
+        "folders":["iso/nominal/W4JetsToLNu"],
+        "style":ROOT.kTeal+2,
+        "legend":{"entry":"WJets","draw":"F"},
+        "weight":"1.313e-05"
     },
     "DiBoson":{
-        "folders":["WW","WZ","ZZ"],
+        "folders":["iso/nominal/WW","iso/nominal/WZ","iso/nominal/ZZ"],
         "style":ROOT.kBlue,
         "legend":{"entry":"DiBoson","draw":"F"},
-        "weight":"1.0"
+        "weight":"xsweight"
     },
     "SingleMu":{
-        "folders":["SingleMu1","SingleMu2","SingleMu3","SingleMu_miss"],
+        "folders":["iso/data/SingleMu"],
         "style":ROOT.kBlack,
         "legend":{"entry":"data","draw":"PE"},
         "weight":"1"
     },
     "SingleEle":{
-        "folders":["SingleEle1","SingleEle2","SingleEle_miss"],
+        "folders":["iso/data/SingleEle"],
         "style":ROOT.kBlack,
         "legend":{"entry":"data","draw":"PE"},
         "weight":"1"
@@ -130,40 +154,42 @@ fitResultNuType=[
     "weight":"((nu_soltype<0.5)*1.18+(nu_soltype>0.5)*1.2)"}
 ]
 
-applyFitResult(setDict,fitResultComp)
+#applyFitResult(setDict,fitResultComp)
 
 for sample in setDict.keys():
     setDict[sample]["files"]=[]
     setDict[sample]["weights"]=[]
     for folder in setDict[sample]["folders"]:
-        path = os.path.join("/home/mkomm/Analysis/STpol/nominal",folder)
-        
+        path = os.path.join("/home/mkomm/Analysis/STpol/skimmed/Oct28_reproc_v4",folder)
         for root, dirs, files in os.walk(path):
             for file in files:
-                if file.endswith("output.root"):
+                if file.endswith(".root") and file.find("output")!=-1:
                      setDict[sample]["files"].append(os.path.join(root,file))
-                if file.endswith("output.root.added"):
+                if file.endswith(".root.added") and file.find("output")!=-1:
                      setDict[sample]["weights"].append(os.path.join(root,file))
     if len(setDict[sample]["files"])==len(setDict[sample]["weights"]):
         print "found ... ",sample,"...",len(setDict[sample]["files"])," files"
     else:
         print "ERROR"
+        
+lumiMu="16872"
+lumiEle="18939"
 
 stack2j1t_mu=[
     {
         "sets":["noTop","otherTop","signal"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>-10.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
     },  
     {
         "sets":["SingleMu"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)"
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>-10.4)"
     }
 ]
 
 stack3j1t_mu=[
     {
         "sets":["noTop","otherTop","signal"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==3)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==3)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
     },  
     {
         "sets":["SingleMu"],
@@ -174,7 +200,7 @@ stack3j1t_mu=[
 stack3j2t_mu=[
     {
         "sets":["noTop","otherTop","signal"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==3)*(ntags==2)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==3)*(ntags==2)*(bdt_qcd>0.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
     },  
     {
        "sets":["SingleMu"],
@@ -186,13 +212,25 @@ stack2j0t_mu=[
     {
         #"sets":["DY","DiBoson","sChan","tWChan","TTJetsDi","TTJetsSemi","WJetsExclLF","WJetsExclCF","WJetsExclBF","tChanLeptons"],
         "sets":["noTop","otherTop","signal"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==0)*(bdt_qcd>0.4)*pu_weight*xsweight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*19700"
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==0)*(bdt_qcd>0.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
     },  
     {
         "sets":["SingleMu"],
         "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==0)*(bdt_qcd>0.4)"
     }
+]    
+stack_mu=[
+    {
+        #"sets":["DY","DiBoson","sChan","tWChan","TTJetsDi","TTJetsSemi","WJetsExclLF","WJetsExclCF","WJetsExclBF","tChanLeptons"],
+        "sets":["noTop","otherTop","signal"],
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets>=2)*(ntags>=0)*(bdt_qcd>0.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
+    },  
+    {
+        "sets":["SingleMu"],
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets>=2)*(ntags>=0)*(bdt_qcd>0.4)"
+    }
 ]
+
 '''
 colorSignal=ROOT.TColor(300,0.984, 0, 0.071,"") 
 colorOtherTop=ROOT.TColor(302,1.00, 0.58, 0.0,"") 
@@ -248,18 +286,18 @@ combinedSets={
     
 }
 
-
+#sys.exit(0)
 
 
 if __name__=="__main__":
     #ROOT.gROOT.SetBatch(True)
-    binning = EquiBinning(50,0,200)
+    binning = EquiBinning(50,-1,1)
     cv=CanvasResiduen()
     #cv=Canvas()
-    cv.setCoordinateStyle(CoordinateStyle(xtitle="mtw",unit="GeV",ytitle="Events",unitBinning=binning))
+    cv.setCoordinateStyle(CoordinateStyle(xtitle="BDT QCD",unit="",ytitle="Events",unitBinning=binning))
     
     stackList=[]
-    legend=Legend(position=Position.Legend.RIGHT_STACKED)
+    legend=Legend(position=Position.Legend.LEFT_STACKED)
     for stackInfo in stack2j1t_mu:
         stackweight=stackInfo["weights"]
         stack=Stack()
@@ -284,15 +322,15 @@ if __name__=="__main__":
                     #break
                 dataChain.AddFriend(weightChain)
                 
-                temp = Histogram1D.projectFromTree(dataChain,"mtw",stackweight+"*"+setweight+"*(bdt_sig_bg>0.6)",binning)
+                temp = Histogram1D.projectFromTree(dataChain,"bdt_qcd",stackweight+"*"+setweight+"*(bdt_sig_bg>-10.6)",binning)
                 setHist.addHistogram(temp)
-                
+                #print stackweight+"*"+setweight
             stack.addHistogram(setHist)
             
         
         cv.addDrawable(stack)
     cv.addDrawable(legend)
-    cv.addDrawable(InfoText.createCMSText(orientation=InfoText.STACKED,position=Position.CMSText.RIGHT_STACKED))
+    cv.addDrawable(InfoText.createCMSText(orientation=InfoText.STACKED,position=Position.CMSText.LEFT_STACKED))
     cv.addDrawable(InfoText.createLumiText())
     
     

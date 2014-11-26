@@ -5,8 +5,6 @@ import ROOT
 import ctypes
 import numpy
 
-ROOT.gROOT.ProcessLine('.L TTF.c')
-
 
 class TextItem:
     def __init__(self,text="",font=43,size=10):

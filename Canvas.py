@@ -154,7 +154,7 @@ class Canvas:
         
         
 class CanvasResiduen:
-    def __init__(self, widthCM=7.3,heightCM=6.0,resHeight=0.37,resRange=[0.2,1.80]):
+    def __init__(self, widthCM=7.3,heightCM=6.0,resHeight=0.37,resRange=[0.2,1.90]):
         self.widthCM=widthCM
         self.heightCM=heightCM
         self.resHeight=resHeight

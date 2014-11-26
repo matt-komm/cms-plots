@@ -120,6 +120,16 @@ class Histogram1D(Drawable):
         return self._binning
         
     @staticmethod
+    def createFromRootHist(rootHist):
+        h = Histogram1D()
+        h._rootHistogram=rootHist
+        binningArray=numpy.zeros(h._rootHistogram.GetNbinsX()+1)
+        for i in range(h._rootHistogram.GetNbinsX()+1):
+            binningArray[i]=h._rootHistogram.GetXaxis().GetBinLowEdge(i)
+        b._binning=ArrayBinning(binningArray)
+        return h
+        
+    @staticmethod
     def createEmpty(binning):
         h = Histogram1D()
         h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())

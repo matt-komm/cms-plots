@@ -1,10 +1,7 @@
+#include "FontMetrics.hpp"
 #include "TTF.h"
 
-#include <iostream>
-
-gSystem.Load("libGraf.so");
-
-long getTextWidth(int font, float size, const char* text)
+long getTextWidth(int font, float size, char* text)
 {
    UInt_t w = 0;
    UInt_t h = 0;
@@ -14,7 +11,7 @@ long getTextWidth(int font, float size, const char* text)
    return w;
 }
 
-long getTextHeight(int font, float size, const char* text)
+long getTextHeight(int font, float size, char* text)
 {
    UInt_t w = 0;
    UInt_t h = 0;
@@ -22,4 +19,4 @@ long getTextHeight(int font, float size, const char* text)
    TTF::SetTextSize(size);
    TTF::GetTextExtent(w,h,text);
    return h;
-}
+}  
