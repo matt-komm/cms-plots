@@ -1,10 +1,16 @@
 #ifndef __FONTMETRICS_H__
 #define __FONTMETRICS_H__
 
+#include "TObject.h"
 
-
-long getTextWidth(int font, float size, char* text);
-long getTextHeight(int font, float size, char* text);
-
+class FontMetrics: 
+    public TObject 
+{
+    public:
+        static long GetTextWidth(int font, float size, char* text);
+        static long GetTextHeight(int font, float size, char* text);
+        
+    ClassDef(FontMetrics, 1)
+};
 #endif
 

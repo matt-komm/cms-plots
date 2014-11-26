@@ -1,7 +1,9 @@
 #include "FontMetrics.hpp"
 #include "TTF.h"
 
-long getTextWidth(int font, float size, char* text)
+ClassImp(FontMetrics)
+
+long FontMetrics::GetTextWidth(int font, float size, char* text)
 {
    UInt_t w = 0;
    UInt_t h = 0;
@@ -11,7 +13,7 @@ long getTextWidth(int font, float size, char* text)
    return w;
 }
 
-long getTextHeight(int font, float size, char* text)
+long FontMetrics::GetTextHeight(int font, float size, char* text)
 {
    UInt_t w = 0;
    UInt_t h = 0;

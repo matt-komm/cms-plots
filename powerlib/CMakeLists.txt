@@ -7,7 +7,7 @@ find_package(ROOT)
 include(FindFreetype)
 #cmake_policy(SET CMP0015 NEW)
 include_directories(${ROOT_INCLUDE_DIR} ${FREETYPE_INCLUDE_DIRS})
-link_directories(${ROOT_LIBDIR})
+#link_directories(${ROOT_LIBDIR})
 
 set(CLASSHEADERS 
     Projector.hpp
@@ -25,5 +25,5 @@ add_library(powerlib MODULE
     FontMetrics.cpp
     dict.C
 )
-target_link_libraries(powerlib Core Tree TreePlayer graph freetype)
+target_link_libraries(powerlib ${ROOT_LIBRARIES} ${FREETYPE_LIBRARIES})
 add_dependencies(powerlib generatedicts)
