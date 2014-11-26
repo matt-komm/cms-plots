@@ -52,11 +52,11 @@ class InfoText(Drawable):
             #splitting according to number of characters
             length = 0
             for item in self.textItemList:
-                length+=ROOT.getTextWidth(item.font,item.size,item.text)
+                length+=ROOT.FontMetrics.GetTextWidth(item.font,item.size,item.text)
             xstart=self._xmin*strech.xminStrech
             xend=self._xmin*strech.xminStrech
             for i,item in enumerate(self.textItemList):  
-                xend=self._xmin*strech.xminStrech+(self._xmax*strech.xmaxStrech-self._xmin*strech.xminStrech)/length*ROOT.getTextWidth(item.font,item.size,item.text)*(i+1)
+                xend=self._xmin*strech.xminStrech+(self._xmax*strech.xmaxStrech-self._xmin*strech.xminStrech)/length*ROOT.FontMetrics.GetTextWidth(item.font,item.size,item.text)*(i+1)
                 
                 self.rootPaveText=ROOT.TPaveText(xstart,self._ymin*strech.yminStrech,xend,self._ymax*strech.ymaxStrech,"NDC")
                 self.rootPaveText.SetFillColor(0)
@@ -72,11 +72,11 @@ class InfoText(Drawable):
         elif self._orientation==InfoText.STACKED:
             length = 0
             for item in self.textItemList:
-                length+=ROOT.getTextHeight(item.font,item.size,item.text)
+                length+=ROOT.FontMetrics.GetTextHeight(item.font,item.size,item.text)
             ystart=self._ymax*strech.ymaxStrech
             yend=self._ymax*strech.ymaxStrech
             for i,item in enumerate(self.textItemList):  
-                ystart=self._ymax*strech.ymaxStrech-(self._ymax*strech.ymaxStrech-self._ymin*strech.yminStrech)/length*ROOT.getTextHeight(item.font,item.size,item.text)*(i+1)
+                ystart=self._ymax*strech.ymaxStrech-(self._ymax*strech.ymaxStrech-self._ymin*strech.yminStrech)/length*ROOT.FontMetrics.GetTextHeight(item.font,item.size,item.text)*(i+1)
                 
                 self.rootPaveText=ROOT.TPaveText(self._xmin*strech.xminStrech,ystart,self._xmax*strech.xmaxStrech,yend,"NDC")
                 self.rootPaveText.SetFillColor(0)

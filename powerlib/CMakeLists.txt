@@ -25,5 +25,5 @@ add_library(powerlib MODULE
     FontMetrics.cpp
     dict.C
 )
-target_link_libraries(powerlib ${ROOT_LIBRARIES} ${FREETYPE_LIBRARIES})
+target_link_libraries(powerlib ${ROOT_LIBRARIES} ${FREETYPE_LIBRARIES} TreePlayer)
 add_dependencies(powerlib generatedicts)

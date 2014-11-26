@@ -8,7 +8,7 @@ from Position import *
 import os, sys
 
 import ROOT
-
+ROOT.gSystem.Load("libpowerlib.so")
 
 def applyFitResult(setDict,fitResults):
     for res in fitResults:
@@ -319,7 +319,7 @@ if __name__=="__main__":
                 for i in range(len(dataFiles)):
                     dataChain.AddFile(dataFiles[i])
                     weightChain.AddFile(weightFiles[i])
-                    #break
+                    break
                 dataChain.AddFriend(weightChain)
                 
                 temp = Histogram1D.projectFromTree(dataChain,"bdt_qcd",stackweight+"*"+setweight+"*(bdt_sig_bg>-10.6)",binning)

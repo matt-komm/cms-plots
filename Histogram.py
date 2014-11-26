@@ -144,7 +144,8 @@ class Histogram1D(Drawable):
         h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
         h._rootHistogram.Sumw2()
         h._binning=binning
-        rootTree.Project(h._rootHistogram.GetName(),varStr,cutStr)
+        projector = ROOT.Projector(h._rootHistogram,rootTree,varStr,cutStr)
+        projector.Project()
         return h
         
     def draw(self,canvas,strech=Strech(),addOptions=""):
