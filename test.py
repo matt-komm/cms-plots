@@ -160,7 +160,7 @@ for sample in setDict.keys():
     setDict[sample]["files"]=[]
     setDict[sample]["weights"]=[]
     for folder in setDict[sample]["folders"]:
-        path = os.path.join("/home/mkomm/Analysis/STpol/skimmed/Oct28_reproc_v4",folder)
+        path = os.path.join("/home/mkomm/Analysis/STpol/Oct28_reproc",folder)
         for root, dirs, files in os.walk(path):
             for file in files:
                 if file.endswith(".root") and file.find("output")!=-1:
@@ -171,6 +171,8 @@ for sample in setDict.keys():
         print "found ... ",sample,"...",len(setDict[sample]["files"])," files"
     else:
         print "ERROR"
+    setDict[sample]["files"]=sorted(setDict[sample]["files"])
+    setDict[sample]["weights"]=sorted(setDict[sample]["weights"])
         
 lumiMu="16872"
 lumiEle="18939"
@@ -178,11 +180,22 @@ lumiEle="18939"
 stack2j1t_mu=[
     {
         "sets":["noTop","otherTop","signal"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>-10.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
     },  
     {
         "sets":["SingleMu"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>-10.4)"
+        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)"
+    }
+]
+
+stack2j1t_ele=[
+    {
+        "sets":["noTop","otherTop","signal"],
+        "weights":"(n_signal_mu==0)*(n_signal_ele==1)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_ele==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiEle
+    },  
+    {
+        "sets":["SingleEle"],
+        "weights":"(n_signal_mu==0)*(n_signal_ele==1)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_ele==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)"
     }
 ]
 
@@ -290,15 +303,24 @@ combinedSets={
 
 
 if __name__=="__main__":
+    h = Histogram1D.createFromSearchInFile("/home/mkomm/Analysis/STpol/bdt_scan/hists/preselection/2j_1t/mu/abs_ljet_eta.root",
+        ["*T_t_ToLeptons__iso"]
+    
+    )
+    cv=ROOT.TCanvas("cv","",800,600)
+    h.getRootHistogram().Draw()
+    cv.WaitPrimitive()
+    
+    '''
     #ROOT.gROOT.SetBatch(True)
-    binning = EquiBinning(50,-1,1)
+    binning = EquiBinning(80,0.0,200)
     cv=CanvasResiduen()
     #cv=Canvas()
-    cv.setCoordinateStyle(CoordinateStyle(xtitle="BDT QCD",unit="",ytitle="Events",unitBinning=binning))
+    cv.setCoordinateStyle(CoordinateStyle(xtitle="MTW",unit="GeV",ytitle="Events",unitBinning=binning))
     
     stackList=[]
-    legend=Legend(position=Position.Legend.LEFT_STACKED)
-    for stackInfo in stack2j1t_mu:
+    legend=Legend(position=Position.Legend.RIGHT_STACKED)
+    for stackInfo in stack2j1t_ele:
         stackweight=stackInfo["weights"]
         stack=Stack()
         stackList.append(stack)
@@ -309,28 +331,27 @@ if __name__=="__main__":
             legendEntry.rootObj=setHist.getRootHistogram()
             legend.addEntry(legendEntry)
             for singleSet in combinedSets[setName]["sets"]:
-                print singleSet
+                
                 setInfo = setDict[singleSet]
                 setweight=setInfo["weight"]
                 dataFiles=setInfo["files"]
                 weightFiles=setInfo["weights"]
-                dataChain=ROOT.TChain("dataframe","data")
-                weightChain=ROOT.TChain("dataframe","weight")
-                for i in range(len(dataFiles)):
-                    dataChain.AddFile(dataFiles[i])
-                    weightChain.AddFile(weightFiles[i])
-                    break
-                dataChain.AddFriend(weightChain)
                 
-                temp = Histogram1D.projectFromTree(dataChain,"bdt_qcd",stackweight+"*"+setweight+"*(bdt_sig_bg>-10.6)",binning)
-                setHist.addHistogram(temp)
-                #print stackweight+"*"+setweight
+                for i in range(len(dataFiles)):
+                    sys.stdout.write('%s: %i/%i\r' % (singleSet,i+1,len(dataFiles)))
+                    sys.stdout.flush()
+                    datafile=ROOT.TFile(dataFiles[i],"r")
+                    tree=datafile.Get("dataframe")
+                    tree.AddFriend("dataframe",weightFiles[i])
+                    setHist.addProjectFromTree(tree,"mtw",stackweight+"*"+setweight)
+                    datafile.Close()
+                print
             stack.addHistogram(setHist)
             
         
         cv.addDrawable(stack)
     cv.addDrawable(legend)
-    cv.addDrawable(InfoText.createCMSText(orientation=InfoText.STACKED,position=Position.CMSText.LEFT_STACKED))
+    cv.addDrawable(InfoText.createCMSText(orientation=InfoText.STACKED,position=Position.CMSText.RIGHT_STACKED))
     cv.addDrawable(InfoText.createLumiText())
     
     
@@ -342,13 +363,4 @@ if __name__=="__main__":
     cv.draw()
     cv.wait()
     #hist.setStyle(HistogramStyle.createFilled(2))
-    '''    
-
-
-    cv=Canvas()
-
-    histAxisStyle = CoordinateStyle()
-    histAxisStyle.applyStyle(hist.GetXaxis(),hist.GetYaxis(),hist.GetXaxis(),"GeV")
-    hist.Draw()
-    cv.wait()
     '''

@@ -2,9 +2,12 @@ from Style import *
 from Drawable import *
 from Legend import *
 
+from decimal import Decimal
+
 import ROOT
 import numpy
 import random
+import re
         
 class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
     def __init__(self):
@@ -54,15 +57,35 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         FillStyle.applyStyle(self,rootHistogram)
         MarkerStyle.applyStyle(self,rootHistogram)
         
-class Binning:
+class Binning(object):
+    def __init__(self):
+        pass
+
     def getArray(self):
         raise NotImplemented
         
     def getN(self):
         raise NotImplemented
         
+    def __eq__(self,other):
+        if not isinstance(other, Binning):
+            return False
+        if self.getN()!=other.getN():
+            return False
+        array1=self.getArray()
+        array2=other.getArray()
+        
+        for i in range(self.getN()+1):
+            if Decimal(array1[i])!=Decimal(array2[i]):
+                return False
+        return True
+        
+    def __ne__(self,other):
+        return not (self==other)
+        
 class EquiBinning(Binning):
     def __init__(self,N,start,end):
+        Binning.__init__(self)
         self.N=N
         self.start=start
         self.end=end
@@ -73,9 +96,18 @@ class EquiBinning(Binning):
     def getN(self):
         return self.N
         
-class ArrayBinning:
+        
+class ArrayBinning(Binning):
     def __init__(self,array):
+        Binning.__init__(self)
         self.array=array
+        
+    @staticmethod
+    def fromRootHistogram(rootHist):
+        binningArray=numpy.zeros(rootHist.GetNbinsX()+1)
+        for i in range(rootHist.GetNbinsX()+1):
+            binningArray[i]=rootHist.GetXaxis().GetBinLowEdge(i)
+        return ArrayBinning(binningArray)
         
     def getArray(self):
         return self.array
@@ -83,8 +115,6 @@ class ArrayBinning:
     def getN(self):
         return len(self.array)-1
         
-        
-
 class Histogram1D(Drawable):
     def __init__(self):
         Drawable.__init__(self,hasAxis=True)
@@ -122,11 +152,34 @@ class Histogram1D(Drawable):
     @staticmethod
     def createFromRootHist(rootHist):
         h = Histogram1D()
-        h._rootHistogram=rootHist
-        binningArray=numpy.zeros(h._rootHistogram.GetNbinsX()+1)
-        for i in range(h._rootHistogram.GetNbinsX()+1):
-            binningArray[i]=h._rootHistogram.GetXaxis().GetBinLowEdge(i)
-        b._binning=ArrayBinning(binningArray)
+        h._rootHistogram=rootHist.Clone("hist"+str(random.random()))
+        h._rootHistogram.SetDirectory(0)
+        h._binning=ArrayBinning.fromRootHistogram(rootHist)
+        return h
+        
+    @staticmethod
+    def createFromSearchInFile(filename,searchList):
+        f = ROOT.TFile(filename,"r")
+        
+        allKeys=[]
+        
+        for k in f.GetListOfKeys():
+            allKeys.append(k.GetName())
+        matchedHists=[]
+        for item in searchList:
+            expr = re.compile(item.replace(".","\.").replace("*","[0-9a-zA-Z_\-]*"))
+            for k in allKeys:
+                if (expr.match(k)!=None):
+                    matchedHists.append(f.Get(k))
+        if len(matchedHists)==0:
+            return None
+        h=None
+        for hist in matchedHists:
+            if (h==None):
+                h = Histogram1D.createFromRootHist(hist)
+            else:
+                h.getRootHistogram().Add(hist)
+        f.Close()
         return h
         
     @staticmethod
@@ -147,6 +200,10 @@ class Histogram1D(Drawable):
         projector = ROOT.Projector(h._rootHistogram,rootTree,varStr,cutStr)
         projector.Project()
         return h
+        
+    def addProjectFromTree(self,rootTree,varStr,cutStr):
+        projector = ROOT.Projector(self._rootHistogram,rootTree,varStr,cutStr)
+        projector.Project()
         
     def draw(self,canvas,strech=Strech(),addOptions=""):
         self._style.applyStyle(self._rootHistogram)
