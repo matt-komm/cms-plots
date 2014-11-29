@@ -44,14 +44,9 @@ class ProjectionGroup
         {
         }
         ProjectionGroup(TH1* hist);
-        void add(TTree* tree, const char* varExp, const char* cutExp)
+        void add(Projector* projector)
         {
-            char buf[50];
-            sprintf(buf,"hist_%i",rand());
-            TH1* tempHist = (TH1*)_hist->Clone(buf);
-            tree->GetEntry(0);
-            Projector* p = new Projector(tempHist,tree,varExp,cutExp);
-            _projectors.push_back(std::make_pair(new Status(),p));
+            _projectors.push_back(std::make_pair(new Status(),projector));
         }
         
         int getNextItem()
@@ -69,7 +64,7 @@ class ProjectionGroup
                     break;
                 }
             }
-            //std::cout<<std::this_thread::get_id()<<", next: "<<next<<std::endl;
+            std::cout<<std::this_thread::get_id()<<", next: "<<next<<std::endl;
             #ifndef __CINT__
             _mutex.unlock();
             #endif
@@ -104,9 +99,12 @@ class ProjectionGroup
             std::function<void()> fct = std::bind(&ProjectionGroup::ProjectThreaded,this);
             //fct();
             std::vector<std::thread*> threads;
+            fct();
+            /*
             for (unsigned int ithread = 0; ithread<std::min(nthreads, (unsigned int)_projectors.size()); ++ithread)
             {
-                //(ptr)();
+                
+                
                 std::thread* t = new std::thread(fct);
                 
                 threads.push_back(t);
@@ -116,7 +114,7 @@ class ProjectionGroup
             {
                 threads[ithread]->join();
             }
-              
+            */
             #endif
         }
         /*

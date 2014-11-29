@@ -4,7 +4,6 @@
 ProjectionGroup::ProjectionGroup(TH1* hist):
     _hist(hist)
 {
-
 }
 
 /*

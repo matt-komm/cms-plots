@@ -3,14 +3,18 @@
 
 #include <iostream>
 #include <functional>
+#include <vector>
+#include <string>
 
 #include "TObject.h"
 #include "TTree.h"
 #include "TTreeFormula.h"
 #include "TH1.h"
 #include "TThread.h"
+#include "TFile.h"
+#include "TMemFile.h"
 
-typedef TThread::VoidRtnFunc_t ProjectFct;
+
 
 class Projector
 {
@@ -18,17 +22,18 @@ class Projector
         
     private:
         TH1* _hist;
-        TTree* _tree;
-        TTreeFormula _varFct;
-        TTreeFormula _cutFct;
-        ProjectFct _projectFct;
+        std::vector<std::string> _filenames;
+        std::vector<std::string> _treenames;
+        std::string _varExp;
+        std::string _cutExp;
+        
     public:
     
         Projector();
-        Projector(TH1* hist, TTree* tree, const char* varExp, const char* cutExp);
-        void Print(long i=0);
+        Projector(TH1* hist, const char* filename, const char* treename, const char* varExp, const char* cutExp);
+        
+        void addFriend(const char* filename, const char* treename);
         void Project();
-        ProjectFct getProjectFct();
         
         inline const TH1* getHist() const
         {

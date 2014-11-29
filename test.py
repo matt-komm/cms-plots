@@ -303,6 +303,7 @@ combinedSets={
 
 
 if __name__=="__main__":
+    '''
     h = Histogram1D.createFromSearchInFile("/home/mkomm/Analysis/STpol/bdt_scan/hists/preselection/2j_1t/mu/abs_ljet_eta.root",
         ["*T_t_ToLeptons__iso"]
     
@@ -310,7 +311,6 @@ if __name__=="__main__":
     cv=ROOT.TCanvas("cv","",800,600)
     h.getRootHistogram().Draw()
     cv.WaitPrimitive()
-    
     '''
     #ROOT.gROOT.SetBatch(True)
     binning = EquiBinning(80,0.0,200)
@@ -330,6 +330,8 @@ if __name__=="__main__":
             legendEntry=combinedSets[setName]["legend"]
             legendEntry.rootObj=setHist.getRootHistogram()
             legend.addEntry(legendEntry)
+            
+            
             for singleSet in combinedSets[setName]["sets"]:
                 
                 setInfo = setDict[singleSet]
@@ -337,15 +339,21 @@ if __name__=="__main__":
                 dataFiles=setInfo["files"]
                 weightFiles=setInfo["weights"]
                 
+                #openedFiles=[]
+                #projectionGroup = ROOT.ProjectionGroup(setHist.getRootHistogram())
                 for i in range(len(dataFiles)):
                     sys.stdout.write('%s: %i/%i\r' % (singleSet,i+1,len(dataFiles)))
                     sys.stdout.flush()
                     datafile=ROOT.TFile(dataFiles[i],"r")
+                    #openedFiles.append(datafile)
                     tree=datafile.Get("dataframe")
                     tree.AddFriend("dataframe",weightFiles[i])
+                    tree.GetEntry(0)
+                    #projectionGroup.add(tree,"mtw",stackweight+"*"+setweight)
                     setHist.addProjectFromTree(tree,"mtw",stackweight+"*"+setweight)
                     datafile.Close()
                 print
+                #projectionGroup.Project(4)
             stack.addHistogram(setHist)
             
         
@@ -363,4 +371,4 @@ if __name__=="__main__":
     cv.draw()
     cv.wait()
     #hist.setStyle(HistogramStyle.createFilled(2))
-    '''
+    
