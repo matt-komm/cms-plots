@@ -40,8 +40,8 @@ class InfoText(Drawable):
         return infoText  
     
     @staticmethod
-    def createLumiText(position=Position.Lumi.RIGHT,alignment=33):
-        textItemList=[TextItem("19.7 fb^{-1} #lower[-0.1]{#scale[0.9]{(}}8 TeV#lower[-0.1]{#scale[0.9]{)}}",43,9)]
+    def createLumiText(position=Position.Lumi.RIGHT,alignment=33,lumi="19.7"):
+        textItemList=[TextItem(lumi+" fb^{-1} #lower[-0.1]{#scale[0.9]{(}}8 TeV#lower[-0.1]{#scale[0.9]{)}}",43,9)]
         infoText = InfoText(textItemList,position=position,alignment=alignment,orientation=InfoText.SIDEWAYS)
         return infoText
         

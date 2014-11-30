@@ -40,3 +40,4 @@ class Drawable:
         
     def getLegendInfo(self):
         raise NotImplemented
+        

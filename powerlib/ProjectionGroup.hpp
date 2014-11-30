@@ -44,7 +44,7 @@ class ProjectionGroup
         {
         }
         ProjectionGroup(TH1* hist);
-        void add(Projector* projector)
+        void Add(Projector* projector)
         {
             _projectors.push_back(std::make_pair(new Status(),projector));
         }
@@ -98,9 +98,19 @@ class ProjectionGroup
             #ifndef __CINT__
             std::function<void()> fct = std::bind(&ProjectionGroup::ProjectThreaded,this);
             //fct();
-            std::vector<std::thread*> threads;
-            fct();
             /*
+            for (unsigned int i = 0; i < _projectors.size(); ++i)
+            {
+                std::cout<<i<<"/"<<_projectors.size()<<"\r";
+                std::cout.flush();
+                _projectors[i].second->Project();
+                *?
+            }
+            std::cout<<std::endl;
+            */
+            std::vector<std::thread*> threads;
+
+            
             for (unsigned int ithread = 0; ithread<std::min(nthreads, (unsigned int)_projectors.size()); ++ithread)
             {
                 
@@ -114,7 +124,7 @@ class ProjectionGroup
             {
                 threads[ithread]->join();
             }
-            */
+            
             #endif
         }
         /*

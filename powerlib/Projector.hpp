@@ -33,7 +33,7 @@ class Projector
         Projector(TH1* hist, const char* filename, const char* treename, const char* varExp, const char* cutExp);
         
         void addFriend(const char* filename, const char* treename);
-        void Project();
+        void Project(long maxentries=0);
         
         inline const TH1* getHist() const
         {

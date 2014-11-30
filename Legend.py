@@ -29,7 +29,7 @@ class Legend(Drawable):
         self._legend.SetFillColor(0)
         self._legend.SetBorderSize(0)
         self._legend.SetTextFont(43)
-        self._legend.SetTextAlign(13)
+        self._legend.SetTextAlign(12)
         self._legend.SetTextSize(self.textsize*strech.fontStrech)
         for entry in reversed(sorted(self._legendEntries,cmp=lambda x,y: x.priority-y.priority)):
             self._legend.AddEntry(entry.rootObj,entry.title,entry.drawOptions)

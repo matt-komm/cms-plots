@@ -6,7 +6,7 @@ from Axis import *
 from Drawable import *
 
 class Canvas:
-    def __init__(self, widthCM=7.3,heightCM=6.0):
+    def __init__(self, widthCM=7.3,heightCM=6.0,margins=BoundingBox(BoundingBox.PERCENTS,0.16,0.14,1-0.055,1-0.065)):
         self.widthCM=widthCM
         self.heightCM=heightCM
         
@@ -56,10 +56,10 @@ class Canvas:
 
 
         # Margins:
-        self.rootCanvas.SetTopMargin(0.065)
-        self.rootCanvas.SetBottomMargin(0.14)
-        self.rootCanvas.SetLeftMargin(0.16)
-        self.rootCanvas.SetRightMargin(0.055)
+        self.rootCanvas.SetTopMargin(1-margins.ymax)
+        self.rootCanvas.SetBottomMargin(margins.ymin)
+        self.rootCanvas.SetLeftMargin(margins.xmin)
+        self.rootCanvas.SetRightMargin(1-margins.xmax)
 
         # For the Global title:
 
@@ -82,6 +82,9 @@ class Canvas:
         tdrStyle.SetOptFit(0)
         tdrStyle.SetOptDate(0)
         tdrStyle.SetOptFile(0)
+        tdrStyle.SetDrawBorder(0)
+        tdrStyle.SetCanvasBorderMode(0)
+        tdrStyle.SetCanvasColor(ROOT.kWhite)
         tdrStyle.SetStripDecimals(True)
         tdrStyle.SetPaperSize(self.widthCM,self.heightCM) #sets size in cm
         tdrStyle.SetHatchesLineWidth(5)
@@ -154,11 +157,12 @@ class Canvas:
         
         
 class CanvasResiduen:
-    def __init__(self, widthCM=7.3,heightCM=6.0,resHeight=0.37,resRange=[0.2,1.90]):
+    def __init__(self, widthCM=7.3,heightCM=6.0,resHeight=0.37,resRange=[0.2,1.90],margins=BoundingBox(BoundingBox.PERCENTS,0.16,0.14,1-0.055,1-0.065)):
         self.widthCM=widthCM
         self.heightCM=heightCM
         self.resHeight=resHeight
         self.resRange=resRange
+        self.margins=margins
                 
         #by default canvasSize=20x20cm
         
@@ -211,8 +215,8 @@ class CanvasResiduen:
             self.rootCanvas.GetPad(i).SetFrameLineWidth(1)
 
             # Margins:
-            self.rootCanvas.GetPad(i).SetLeftMargin(0.16)
-            self.rootCanvas.GetPad(i).SetRightMargin(0.055)
+            self.rootCanvas.GetPad(i).SetLeftMargin(margins.xmin)
+            self.rootCanvas.GetPad(i).SetRightMargin(1-margins.xmax)
             
             # For the Global title:
             self.rootCanvas.GetPad(i).SetTitle("")
@@ -228,10 +232,10 @@ class CanvasResiduen:
         
         
         
-        self.rootCanvas.GetPad(1).SetTopMargin(0.065)
-        self.rootCanvas.GetPad(1).SetBottomMargin(self.resHeight)
-        self.rootCanvas.GetPad(2).SetTopMargin(1-self.resHeight)
-        self.rootCanvas.GetPad(2).SetBottomMargin(0.14)
+        self.rootCanvas.GetPad(2).SetTopMargin(1-margins.ymax)
+        self.rootCanvas.GetPad(2).SetBottomMargin(self.resHeight)
+        self.rootCanvas.GetPad(1).SetTopMargin(1-self.resHeight)
+        self.rootCanvas.GetPad(1).SetBottomMargin(margins.ymin)
 
         
         
@@ -244,6 +248,9 @@ class CanvasResiduen:
         tdrStyle.SetOptFit(0)
         tdrStyle.SetOptDate(0)
         tdrStyle.SetOptFile(0)
+        tdrStyle.SetDrawBorder(0)
+        tdrStyle.SetCanvasBorderMode(0)
+        tdrStyle.SetCanvasColor(ROOT.kWhite)
         tdrStyle.SetStripDecimals(True)
         tdrStyle.SetPaperSize(self.widthCM,self.heightCM) #sets size in cm
         tdrStyle.SetHatchesLineWidth(5)
@@ -262,7 +269,7 @@ class CanvasResiduen:
         self._grid=None
         
         self._constSpace={"xmin":0.0,"xmax":0.0,"ymin":0.0,"ymax":0.0}
-        self._factorSpace={"xmin":1.0,"xmax":1.0,"ymin":1.0,"ymax":1.2}
+        self._factorSpace={"xmin":1.0,"xmax":1.0,"ymin":1.0,"ymax":1.25}
         
        
         
@@ -277,6 +284,7 @@ class CanvasResiduen:
         self._coordinateStyle.xaxis.titleSize=0.00000000000000000000001
         self._coordinateStyle.xaxis.lableSize=0.00000000000000000000001
         self._coordinateStyleRes=copy.deepcopy(style)
+        #self._coordinateStyleRes.yaxis.labelSize=0.000001
         self._coordinateStyleRes.yaxis.title="data/MC"
         self._coordinateStyleRes.yaxis.ndiv=504
         self._coordinateStyleRes.yaxis.enableUnit=False
@@ -300,14 +308,19 @@ class CanvasResiduen:
         
     def setFactorSpace(self,key,value):
         self._factorSpace[key]=value
+        
+    def save(self,name):
+        self.rootCanvas.Print(name)
     
     def draw(self):
-        self.rootCanvas.cd(1)
-        boundingBox=None
         strech = Strech()
         strech.fontStrech=self.getPtInPx()
         strech.ymaxStrech=1
         strech.yminStrech=1
+        
+        self.rootCanvas.cd(2)
+        boundingBox=None
+        
         for i in range(len(self._drawables)):
             if self._drawables[i].hasAxis:
                 self._drawables[i].draw(self,strech=strech)
@@ -315,37 +328,31 @@ class CanvasResiduen:
                     boundingBox=self._drawables[i].getBoundingBox()
                 else:
                     boundingBox.union(self._drawables[i].getBoundingBox())
-        self._grid=ROOT.TH2F("axis"+str(random.random()),"",
-            50,boundingBox.xmin*self._factorSpace["xmin"]-self._constSpace["xmin"],boundingBox.xmax*self._factorSpace["xmax"]+self._constSpace["xmax"],
-            50,boundingBox.ymin*self._factorSpace["ymin"]-self._constSpace["ymin"],boundingBox.ymax*self._factorSpace["ymax"]+self._constSpace["ymax"]
-        )
+    
+        self.rootCanvas.cd(1)
+        
         self._resgrid=ROOT.TH2F("res"+str(random.random()),"",
             50,boundingBox.xmin*self._factorSpace["xmin"]-self._constSpace["xmin"],boundingBox.xmax*self._factorSpace["xmax"]+self._constSpace["xmax"],
             50,self.resRange[0],self.resRange[1]
         )
-        self._coordinateStyle.xaxis.fontScale=0
-        self._coordinateStyle.yaxis.fontScale=strech.fontStrech
-        self._coordinateStyle.xaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(1).GetLeftMargin()-self.rootCanvas.GetPad(1).GetRightMargin())
-        self._coordinateStyle.yaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(1).GetTopMargin()-self.rootCanvas.GetPad(1).GetBottomMargin())
         
-        self._coordinateStyle.applyStyle(self._grid)
-        self._grid.Draw("AXIS")
         
-        for i in range(len(self._drawables)):
-            self._drawables[i].draw(self,strech=strech,addOptions="SAME")
-        self._grid.Draw("AXIS SAME")
-
-        
-        self.rootCanvas.cd(2)
         self._coordinateStyleRes.xaxis.fontScale=strech.fontStrech
         self._coordinateStyleRes.yaxis.fontScale=strech.fontStrech
-        self._coordinateStyleRes.xaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(2).GetLeftMargin()-self.rootCanvas.GetPad(2).GetRightMargin())
-        self._coordinateStyleRes.yaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(2).GetTopMargin()-self.rootCanvas.GetPad(2).GetBottomMargin())
+        self._coordinateStyleRes.xaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(1).GetLeftMargin()-self.rootCanvas.GetPad(1).GetRightMargin())
+        self._coordinateStyleRes.yaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(1).GetTopMargin()-self.rootCanvas.GetPad(1).GetBottomMargin())
 
         self._coordinateStyleRes.applyStyle(self._resgrid)
         self._resgrid.Draw("AXIS")
         for i in range(len(self._drawablesRes)):
             self._drawablesRes[i].draw(self,strech=strech,addOptions="SAME")
+            
+        height = 0.004+1.0*ROOT.FontMetrics.GetTextHeight(self._coordinateStyleRes.yaxis.labelFont,self._coordinateStyleRes.yaxis.labelSize*strech.fontStrech,"0.0")/self.heightPx
+        width = 1.0*ROOT.FontMetrics.GetTextWidth(self._coordinateStyleRes.yaxis.labelFont,self._coordinateStyleRes.yaxis.labelSize*strech.fontStrech,"0.0")/self.widthPx
+        self._box=ROOT.TPaveText(self.margins.xmin-0.02-width,self.resHeight-height*0.5,self.margins.xmin-0.005,self.resHeight+height*0.5,"NDC")
+        self._box.SetFillColor(ROOT.kWhite)
+        self._box.SetFillStyle(1001)
+        self._box.Draw("Same")
         
         self._resgridaxis=ROOT.TF1("resaxis"+str(random.random()),"1",boundingBox.xmin*self._factorSpace["xmin"]-self._constSpace["xmin"],boundingBox.xmax*self._factorSpace["xmax"]+self._constSpace["xmax"])
         self._resgridaxis.SetLineColor(1)
@@ -353,6 +360,26 @@ class CanvasResiduen:
         self._resgridaxis.SetLineWidth(1)
         self._resgridaxis.Draw("SAME")
         self._resgrid.Draw("AXIS SAME")
+        
+        
+    
+        self.rootCanvas.cd(2)
+        self._grid=ROOT.TH2F("axis"+str(random.random()),"",
+            50,boundingBox.xmin*self._factorSpace["xmin"]-self._constSpace["xmin"],boundingBox.xmax*self._factorSpace["xmax"]+self._constSpace["xmax"],
+            50,boundingBox.ymin*self._factorSpace["ymin"]-self._constSpace["ymin"],boundingBox.ymax*self._factorSpace["ymax"]+self._constSpace["ymax"]
+        )
+
+        self._coordinateStyle.xaxis.fontScale=0
+        self._coordinateStyle.yaxis.fontScale=strech.fontStrech
+        self._coordinateStyle.xaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(2).GetLeftMargin()-self.rootCanvas.GetPad(2).GetRightMargin())
+        self._coordinateStyle.yaxis.thickScale=1.0/(1-self.rootCanvas.GetPad(2).GetTopMargin()-self.rootCanvas.GetPad(2).GetBottomMargin())
+        
+        self._coordinateStyle.applyStyle(self._grid)
+        self._grid.Draw("AXIS")
+        
+        for i in range(len(self._drawables)):
+            self._drawables[i].draw(self,strech=strech,addOptions="SAME")
+        self._grid.Draw("AXIS SAME")
 
         
     def wait(self):

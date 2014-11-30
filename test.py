@@ -160,7 +160,7 @@ for sample in setDict.keys():
     setDict[sample]["files"]=[]
     setDict[sample]["weights"]=[]
     for folder in setDict[sample]["folders"]:
-        path = os.path.join("/home/mkomm/Analysis/STpol/Oct28_reproc",folder)
+        path = os.path.join("/home/mkomm/Analysis/STpol/Oct28_reproc_v5",folder)
         for root, dirs, files in os.walk(path):
             for file in files:
                 if file.endswith(".root") and file.find("output")!=-1:
@@ -177,16 +177,7 @@ for sample in setDict.keys():
 lumiMu="16872"
 lumiEle="18939"
 
-stack2j1t_mu=[
-    {
-        "sets":["noTop","otherTop","signal"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*"+lumiMu
-    },  
-    {
-        "sets":["SingleMu"],
-        "weights":"(n_signal_mu==1)*(n_signal_ele==0)*(n_veto_mu==0)*(n_veto_ele==0)*(hlt_mu==1)*(njets==2)*(ntags==1)*(bdt_qcd>0.4)"
-    }
-]
+
 
 stack2j1t_ele=[
     {
@@ -344,14 +335,9 @@ if __name__=="__main__":
                 for i in range(len(dataFiles)):
                     sys.stdout.write('%s: %i/%i\r' % (singleSet,i+1,len(dataFiles)))
                     sys.stdout.flush()
-                    datafile=ROOT.TFile(dataFiles[i],"r")
-                    #openedFiles.append(datafile)
-                    tree=datafile.Get("dataframe")
-                    tree.AddFriend("dataframe",weightFiles[i])
-                    tree.GetEntry(0)
-                    #projectionGroup.add(tree,"mtw",stackweight+"*"+setweight)
-                    setHist.addProjectFromTree(tree,"mtw",stackweight+"*"+setweight)
-                    datafile.Close()
+                    p = ROOT.Projector(setHist.getRootHistogram(), dataFiles[i], "dataframe", "mtw", stackweight+"*"+setweight);
+                    p.addFriend(weightFiles[i],"dataframe")
+                    p.Project()
                 print
                 #projectionGroup.Project(4)
             stack.addHistogram(setHist)

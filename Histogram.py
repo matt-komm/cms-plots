@@ -17,9 +17,12 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         self.drawingOption=""
         
     @staticmethod
-    def createFilled(fillColor=1,lineColor=1,fillStyle=1001):
+    def createFilled(fillColor=1,lineColor=-1,fillStyle=1001):
         s = HistogramStyle()
-        s.lineColor=lineColor
+        if lineColor<0:
+            s.lineColor=getDarkerColor(fillColor)
+        else:
+            s.lineColor=lineColor
         s.lineStyle=1
         s.lineWidth=1
         
@@ -190,20 +193,6 @@ class Histogram1D(Drawable):
         h._binning=binning
         return h
         
-    @staticmethod
-    def projectFromTree(rootTree,varStr,cutStr,binning):
-        h = Histogram1D()
-        
-        h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
-        h._rootHistogram.Sumw2()
-        h._binning=binning
-        projector = ROOT.Projector(h._rootHistogram,rootTree,varStr,cutStr)
-        projector.Project()
-        return h
-        
-    def addProjectFromTree(self,rootTree,varStr,cutStr):
-        projector = ROOT.Projector(self._rootHistogram,rootTree,varStr,cutStr)
-        projector.Project()
         
     def draw(self,canvas,strech=Strech(),addOptions=""):
         self._style.applyStyle(self._rootHistogram)

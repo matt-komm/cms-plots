@@ -11,25 +11,29 @@ Projector::Projector()
 }
 
 Projector::Projector(TH1* hist, const char* filename, const char* treename, const char* varExp, const char* cutExp):
+    _hist(hist),
     _varExp(varExp),
     _cutExp(cutExp)
 {
+    /*
     char buf[50];
     sprintf(buf,"hist_%s_%i",treename,rand());
     _hist = (TH1*)hist->Clone(buf);
+    */
+    
     _filenames.push_back(filename);
     _treenames.push_back(treename);
-    std::cout<<filename<<" "<<treename<<std::endl;
+    //std::cout<<filename<<" "<<treename<<std::endl;
 }
 
 void Projector::addFriend(const char* filename, const char* treename)
 {
     _filenames.push_back(filename);
     _treenames.push_back(treename);
-    std::cout<<filename<<" "<<treename<<std::endl;
+    //std::cout<<filename<<" "<<treename<<std::endl;
 }
 
-void Projector::Project()
+void Projector::Project(long maxentries)
 {   
     TFile* mainFile = new TFile(_filenames[0].c_str(),"r");
     TTree* tree = (TTree*)(mainFile->Get(_treenames[0].c_str()));
@@ -51,7 +55,11 @@ void Projector::Project()
     sprintf(cutFctName,"cutFct_%s_%i",_treenames[0].c_str(),rand());
     TTreeFormula varFct(varFctName,_varExp.c_str(),tree);
     TTreeFormula cutFct(cutFctName,_cutExp.c_str(),tree);
-    for (long ientry = 0; ientry < tree->GetEntries(); ++ientry)
+    if (maxentries==0)
+    {
+        maxentries=tree->GetEntries();
+    }
+    for (long ientry = 0; ientry < std::min((Long64_t)maxentries,tree->GetEntries()); ++ientry)
     {
         tree->GetEntry(ientry);
         
