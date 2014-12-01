@@ -50,18 +50,17 @@ class InfoText(Drawable):
         del self._paves[:]
         if self._orientation==InfoText.SIDEWAYS:
             #splitting according to number of characters
-            length = 0
-            for item in self.textItemList:
-                length+=ROOT.FontMetrics.GetTextWidth(item.font,item.size,item.text)
-            xstart=self._xmin*strech.xminStrech
-            xend=self._xmin*strech.xminStrech
+            xstart=self._xmin
+            xend=self._xmin
+            
             for i,item in enumerate(self.textItemList):  
-                xend=self._xmin*strech.xminStrech+(self._xmax*strech.xmaxStrech-self._xmin*strech.xminStrech)/length*ROOT.FontMetrics.GetTextWidth(item.font,item.size,item.text)*(i+1)
+                #xend=self._xmin*strech.xminStrech+(self._xmax*strech.xmaxStrech-self._xmin*strech.xminStrech)/length*ROOT.FontMetrics.GetTextWidth(item.font,item.size,item.text)*(i+1)
+                xend+=1.0*ROOT.FontMetrics.GetTextWidth(item.font,item.size*strech.fontStrech,item.text)/canvas.widthPx+0.005
                 
-                self.rootPaveText=ROOT.TPaveText(xstart,self._ymin*strech.yminStrech,xend,self._ymax*strech.ymaxStrech,"NDC")
+                self.rootPaveText=ROOT.TPaveText(xstart,self._ymin,xstart,self._ymin,"NDC")
                 self.rootPaveText.SetFillColor(0)
                 self.rootPaveText.SetFillStyle(0)
-                self.rootPaveText.SetTextAlign(self._alignment) 
+                self.rootPaveText.SetTextAlign(13) 
                 self.rootPaveText.SetBorderSize(0)
                 self.rootPaveText.SetTextFont(item.font)
                 self.rootPaveText.SetTextSize(item.size*strech.fontStrech)
@@ -70,18 +69,15 @@ class InfoText(Drawable):
                 self._paves.append(self.rootPaveText)
                 xstart=xend
         elif self._orientation==InfoText.STACKED:
-            length = 0
-            for item in self.textItemList:
-                length+=ROOT.FontMetrics.GetTextHeight(item.font,item.size,item.text)
-            ystart=self._ymax*strech.ymaxStrech
-            yend=self._ymax*strech.ymaxStrech
+            ystart=self._ymin
+            yend=self._ymin
             for i,item in enumerate(self.textItemList):  
-                ystart=self._ymax*strech.ymaxStrech-(self._ymax*strech.ymaxStrech-self._ymin*strech.yminStrech)/length*ROOT.FontMetrics.GetTextHeight(item.font,item.size,item.text)*(i+1)
-                
-                self.rootPaveText=ROOT.TPaveText(self._xmin*strech.xminStrech,ystart,self._xmax*strech.xmaxStrech,yend,"NDC")
+                ystart-=1.0*ROOT.FontMetrics.GetTextHeight(item.font,item.size*strech.fontStrech,item.text)/canvas.heightPx-0.004
+                print ystart,yend,item.text
+                self.rootPaveText=ROOT.TPaveText(self._xmin,ystart,self._xmin,ystart,"NDC")
                 self.rootPaveText.SetFillColor(0)
                 self.rootPaveText.SetFillStyle(0)
-                self.rootPaveText.SetTextAlign(self._alignment) 
+                self.rootPaveText.SetTextAlign(11) 
                 self.rootPaveText.SetBorderSize(0)
                 self.rootPaveText.SetTextFont(item.font)
                 self.rootPaveText.SetTextSize(item.size*strech.fontStrech)

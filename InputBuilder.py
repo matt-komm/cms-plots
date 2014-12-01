@@ -21,9 +21,9 @@ addInput("tChanLeptons",["iso/nominal/T_t_ToLeptons","iso/nominal/Tbar_t_ToLepto
 #other top
 addInput("sChan",["iso/nominal/T_s","iso/nominal/Tbar_s"])
 addInput("tWChan",["iso/nominal/T_tW","iso/nominal/Tbar_tW"])
-addInput("TTJetsDi",["iso/nominal/TTJets_FullLept"])
-addInput("TTJetsSemi",["iso/nominal/TTJets_SemiLept"])
-addInput("TTJetsFull",["iso/nominal/TTJets_MassiveBinDECAY"])
+addInput("TTJetsDi",["iso/nominal/TTJets_FullLept"],"top_weight")
+addInput("TTJetsSemi",["iso/nominal/TTJets_SemiLept"],"top_weight")
+addInput("TTJetsFull",["iso/nominal/TTJets_MassiveBinDECAY"],"top_weight")
 
 #EWK
 addInput("DY",["iso/nominal/DYJets"])
