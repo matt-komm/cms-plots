@@ -99,6 +99,9 @@ class EquiBinning(Binning):
     def getN(self):
         return self.N
         
+    def __str__(self):
+        return str((self.N,self.start,self.end))
+        
         
 class ArrayBinning(Binning):
     def __init__(self,array):
