@@ -51,10 +51,10 @@ for category in [["2j0t",c2j0t],["2j1t",c2j1t],["3j1t",c3j1t],["3j2t",c3j2t]]:
         ["w_phi","#phi(W)","",EquiBinning(50,-3.2,3.2)]
     ]:
     
-        f.write("python condor.py --name=mu_"+category[0]+"_"+var[0]+" --stackMC=MC_mu_single --stackData=data_mu --var="+var[0]+" --varName=\""+var[1]+"\" --unit="+var[2]+" --text=\"#mu+jets"+category[0]+", 16.9\" --weightMC=\""+(category[1]+qcd+lumiMu).get()+"\" --weightData=\""+(category[1]+qcd).get()+"\" --binning=\""+str(var[3])+"\"\n")
-        #f.write("Queue\n")
-        f.write("python condor.py --name=ele_"+category[0]+"_"+var[0]+" --stackMC=MC_ele_single --stackData=data_ele --var="+var[0]+" --varName=\""+var[1]+"\" --unit="+var[2]+" --text=\"e+jets"+category[0]+", 18.9\" --weightMC=\""+(category[1]+qcd+lumiEle).get()+"\" --weightData=\""+(category[1]+qcd).get()+"\" --binning=\""+str(var[3])+"\"\n")
-        #f.write("Queue\n")
+        f.write("Arguments = --name=mu_"+category[0]+"_"+var[0]+" --stackMC=MC_mu_single --stackData=data_mu --var="+var[0]+" --varName=\""+var[1]+"\" --unit="+var[2]+" --text=\"#mu+jets"+category[0]+", 16.9\" --weightMC=\""+(category[1]+qcd+lumiMu).get()+"\" --weightData=\""+(category[1]+qcd).get()+"\" --binning=\""+str(var[3])+"\"\n")
+        f.write("Queue\n")
+        f.write("Arguments = --name=ele_"+category[0]+"_"+var[0]+" --stackMC=MC_ele_single --stackData=data_ele --var="+var[0]+" --varName=\""+var[1]+"\" --unit="+var[2]+" --text=\"e+jets"+category[0]+", 18.9\" --weightMC=\""+(category[1]+qcd+lumiEle).get()+"\" --weightData=\""+(category[1]+qcd).get()+"\" --binning=\""+str(var[3])+"\"\n")
+        f.write("Queue\n")
 f.close()
             
 '''
