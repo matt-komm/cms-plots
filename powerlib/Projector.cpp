@@ -35,7 +35,7 @@ void Projector::addFriend(const char* filename, const char* treename)
 
 void Projector::Project(long maxentries)
 {   
-    TFile* mainFile = new TFile(_filenames[0].c_str(),"r");
+    TFile* mainFile = new TFile(_filenames[0].c_str());
     TTree* tree = (TTree*)(mainFile->Get(_treenames[0].c_str()));
     
     if (!tree)

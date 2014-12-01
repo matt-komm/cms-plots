@@ -27,7 +27,7 @@ if __name__=="__main__":
     print "text: ",options.text
     print "weight MC: ",options.weightMC
     print "weight data: ",options.weightData
-    print "binning: ",options.binning
+    print "binning: ",eval(options.binning)
     
     makePlot(options.name,options.stackMC,options.stackData,
     options.var,options.varName,options.unit,options.text,Weight(options.weightMC),Weight(options.weightData),EquiBinning(*eval(options.binning)))

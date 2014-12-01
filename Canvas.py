@@ -95,8 +95,8 @@ class Canvas:
         tdrStyle.SetGridStyle(3)
         tdrStyle.SetGridWidth(1)
         tdrStyle.cd()
-        ROOT.TGaxis.SetExponentOffset(0.0,0.0,"XY")
-        ROOT.TGaxis.SetExponentOffset(0.0,0.007,"Y")
+        #ROOT.TGaxis.SetExponentOffset(0.0,0.0,"XY")
+        #ROOT.TGaxis.SetExponentOffset(0.0,0.007,"Y")
         ROOT.TGaxis.SetMaxDigits(3)
         
         self._coordinateStyle=CoordinateStyle()
@@ -261,8 +261,8 @@ class CanvasResiduen:
         tdrStyle.SetGridStyle(3)
         tdrStyle.SetGridWidth(1)
         tdrStyle.cd()
-        ROOT.TGaxis.SetExponentOffset(0.0,0.0,"XY")
-        ROOT.TGaxis.SetExponentOffset(0.0,0.007,"Y")
+        #ROOT.TGaxis.SetExponentOffset(0.0,0.0,"XY")
+        #ROOT.TGaxis.SetExponentOffset(0.0,0.007,"Y")
         ROOT.TGaxis.SetMaxDigits(3)
         
         self._coordinateStyle=CoordinateStyle()

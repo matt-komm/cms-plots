@@ -42,9 +42,9 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
                 #sys.stdout.flush()
                 print inputSet.datafiles[i]
-                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", "mtw", (stackSet_MC.weight+sample.weight+inputSet.weight+weightMC).get())
+                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_MC.weight+sample.weight+inputSet.weight+weightMC).get())
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
-                p.Project(0)
+                p.Project()
                 #break
             print   
         stackPlot_MC.addHistogram(sampleHist)
@@ -63,9 +63,9 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
                 #sys.stdout.flush()
                 print inputSet.datafiles[i]
-                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", "mtw", (stackSet_data.weight+sample.weight+inputSet.weight+weightData).get())
+                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_data.weight+sample.weight+inputSet.weight+weightData).get())
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
-                p.Project(0)
+                p.Project()
                 #break
             print   
         stackPlot_data.addHistogram(sampleHist)
