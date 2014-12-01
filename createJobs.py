@@ -27,7 +27,7 @@ f.write("when_to_transfer_output = NEVER\n")
 
 for category in [["2j0t",c2j0t],["2j1t",c2j1t],["3j1t",c3j1t],["3j2t",c3j2t]]:
     for var in [
-        ["bdt_qcd","BDT QCD","",EquiBinning(50,0.4,1)]
+        ["bdt_qcd","BDT QCD","",EquiBinning(50,0.4,1)],
         ["mtw","MTW","GeV",EquiBinning(50,0,200)],
         ["met","MET","GeV",EquiBinning(50,0,250)],
         ["met_phi","#phi(MET)","",EquiBinning(50,-3.2,3.2)],

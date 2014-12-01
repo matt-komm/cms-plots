@@ -16,7 +16,7 @@ ROOT.gSystem.Load("libpowerlib.so")
 
 ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.SetStyle("Plain")
-InputBuilder.findSampleFiles("/home/mkomm/Analysis/STpol/Oct28_reproc_v5")
+InputBuilder.findSampleFiles("/nfs/user/mkomm/stpol_step3/Oct28_reproc_v5")
 
 
 globalPosition.makeLegendOutside()
@@ -44,8 +44,8 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 print inputSet.datafiles[i]
                 p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", "mtw", (stackSet_MC.weight+sample.weight+inputSet.weight+weightMC).get())
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
-                p.Project(1000)
-                break
+                p.Project(0)
+                #break
             print   
         stackPlot_MC.addHistogram(sampleHist)
     cv.addDrawable(stackPlot_MC)
@@ -65,8 +65,8 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 print inputSet.datafiles[i]
                 p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", "mtw", (stackSet_data.weight+sample.weight+inputSet.weight+weightData).get())
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
-                p.Project(1000)
-                break
+                p.Project(0)
+                #break
             print   
         stackPlot_data.addHistogram(sampleHist)
     cv.addDrawable(stackPlot_data)
