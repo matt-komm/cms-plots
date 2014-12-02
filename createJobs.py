@@ -21,45 +21,70 @@ f.write("Output     = log/log$(Process).out\n")
 f.write("Error      = log/log$(Process).error\n")
 f.write("should_transfer_files = NO\n")
 f.write("when_to_transfer_output = NEVER\n")
+f.write("requirements   = (CMSFARM =?= TRUE)\n")
 
 
 
 
 for category in [["2j0t",c2j0t],["2j1t",c2j1t],["3j1t",c3j1t],["3j2t",c3j2t]]:
     for var in [
-        ["bdt_qcd","BDT QCD","",EquiBinning(50,0.4,1)],
+        ["bdt_qcd","BDT--QCD","",EquiBinning(50,0.4,1)],
         ["mtw","MTW","GeV",EquiBinning(50,0,200)],
         ["met","MET","GeV",EquiBinning(50,0,200)],
         ["met_phi","#phi(MET)","",EquiBinning(50,-3.2,3.2)],
         ["lepton_pt","pT(l)","GeV",EquiBinning(50,0,200)],
         ["lepton_eta","#eta(l)","",EquiBinning(50,-2.5,2.5)],
-        ["lepton_iso","rel. iso","",EquiBinning(50,0,0.15)],
-        ["ljet_pt","pT(ljet)","GeV",EquiBinning(50,0,250)],
+        ["lepton_iso","rel. iso","",EquiBinning(50,0,0.12)],
+        ["lepton_charge","charge(l)","e",EquiBinning(3,-1.5,1.5)],
+        ["lepton_phi","#phi(l)","",EquiBinning(50,-3.2,3.2)],
+        ["ljet_pt","pT(ljet)","GeV",EquiBinning(50,0,400)],
         ["ljet_eta","#eta(ljet)","",EquiBinning(50,-5,5)],
-        ["ljet_mass","#eta(bjet)","GeV",EquiBinning(50,0,200)],
-        ["ljet_dr","#DeltaR","",EquiBinning(50,0,7)],
+        ["ljet_mass","m(ljet)","GeV",EquiBinning(50,0,50)],
+        ["ljet_dr","#Delta--R(lj)","",EquiBinning(50,0,7)],
+        ["ljet_rms","RMS(lj)","",EquiBinning(50,0,0.12)],
+        ["ljet_phi","#phi(lj)","",EquiBinning(50,-3.2,3.2)],
         ["bjet_pt","pT(bjet)","GeV",EquiBinning(50,0,250)],
-        ["bjet_eta","#eta(bjet)","",EquiBinning(50,-5,5)],
-        ["bjet_mass","#eta(bjet)","GeV",EquiBinning(50,0,200)],
+        ["bjet_eta","#eta(bjet)","",EquiBinning(50,-4,4)],
+        ["bjet_mass","m(bjet)","GeV",EquiBinning(50,0,50)],
+        ["bjet_dr","#Delta--R(bj)","",EquiBinning(50,0,7)],
+        ["bjet_phi","#phi(bj)","",EquiBinning(50,-3.2,3.2)],
         ["cos_theta_whel_lj","cos#theta_{whel}","",EquiBinning(50,-1,1)],
         ["cos_theta_lj","cos#theta_{lj}","",EquiBinning(50,-1,1)],
-        ["top_pt","pT(top)","GeV",EquiBinning(50,0,250)],
+        ["top_pt","pT(top)","GeV",EquiBinning(50,0,300)],
         ["top_eta","#eta(top)","",EquiBinning(50,-6,6)],
-        ["top_mass","m(top)","GeV",EquiBinning(50,0,250)],
-        ["w_pt","pT(W)","GeV",EquiBinning(50,0,250)],
-        ["w_eta","#eta(W)","",EquiBinning(50,-6,6)],
-        ["w_phi","#phi(W)","",EquiBinning(50,-3.2,3.2)]
+        ["top_mass","m(top)","GeV",EquiBinning(50,100,500)],
+        ["top_phi","#phi(top)","",EquiBinning(50,-3.2,3.2)],
+        ["w_pt","pT(W)","GeV",EquiBinning(50,0,500)],
+        ["w_eta","#eta(W)","",EquiBinning(50,-5,5)],
+        ["w_phi","#phi(W)","",EquiBinning(50,-3.2,3.2)],
+        ["C","C","",EquiBinning(50,0,1)],
+        ["D","D","",EquiBinning(50,0,1)],
+        ["isotropy","isotropy","",EquiBinning(50,0,1)],
+        ["thrust","thrust","",EquiBinning(50,0.4,1)],
+        ["aplanarity","aplanarity","",EquiBinning(50,0,0.5)],
+        ["circularity","circularity","",EquiBinning(50,0,1.0)],
+        ["sphericity","sphericity","",EquiBinning(50,0,1.0)],
+        ["hadronic_pt","pT(HFS))","GeV",EquiBinning(50,0,400)],
+        ["hadronic_eta","#eta(HFS)","",EquiBinning(50,-6.5,6.5)],
+        ["hadronic_mass","m(HFS)","GeV",EquiBinning(50,0,1500)],
+        ["hadronic_phi","#phi(HFS)","",EquiBinning(50,-3.2,3.2)],
+        ["shat_pt","pT(#hat{s})","GeV",EquiBinning(50,0,1500)],
+        ["shat_eta","#eta(#hat{s})","",EquiBinning(50,-8,8)],
+        ["shat_mass","m(#hat{s})","GeV",EquiBinning(50,0,2000)],
+        ["shat_phi","#phi(#hat{s})","",EquiBinning(50,-3.2,3.2)]
     ]:
-        args="Arguments = \"--name=mu_"+category[0]+"_"+var[0]+" --stackMC=MC_mu_single --stackData=data_mu --var="+var[0]+" --varName='"+var[1]+"' --unit='"+var[2]+"' --text='#mu+jets, "+category[0]+", 16.9' --weightMC='"+(category[1]+qcd+lumiMu).get()+"' --weightData='"+(category[1]+qcd).get()+"' --binning='"+str(var[3]).replace(" ","")+"'\"\n"
-        #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
-        f.write(args)
-        f.write("Queue\n")
-        
-        
-        args="Arguments = \"--name=ele_"+category[0]+"_"+var[0]+" --stackMC=MC_ele_single --stackData=data_ele --var="+var[0]+" --varName='"+var[1]+"' --unit='"+var[2]+"' --text='#e+jets, "+category[0]+", 18.9' --weightMC='"+(category[1]+qcd+lumiEle).get()+"' --weightData='"+(category[1]+qcd).get()+"' --binning='"+str(var[3]).replace(" ","")+"'\"\n"
-        #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
-        f.write(args)
-        f.write("Queue\n")
+        for qcd in [["qcdnone",Weight("1")],["qcdbdt",qcdMuBDT],["qcdmtw",qcdMuMTW]]:
+            args="Arguments = \"'--name=mu_"+category[0]+"_"+var[0]+"_"+qcd[0]+"' '--stackMC=MC_mu_single' '--stackData=data_mu' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=#mu+jets,--"+category[0]+",--16.9' '--weightMC="+(category[1]+qcd[1]+lumiMu).get()+"' '--weightData="+(category[1]+qcd[1]).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n"
+            #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
+            f.write(args)
+            f.write("Queue\n")
+            
+        for qcd in [["qcdnone",Weight("1")],["qcdbdt",qcdEleBDT],["qcdmet",qcdEleMET]]:
+            args="Arguments = \"'--name=ele_"+category[0]+"_"+var[0]+"_"+qcd[0]+"' '--stackMC=MC_ele_single' '--stackData=data_ele' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=e+jets,--"+category[0]+",--18.9' '--weightMC="+(category[1]+qcd[1]+lumiEle).get()+"' '--weightData="+(category[1]+qcd[1]).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n"
+            #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
+            f.write(args)
+            f.write("Queue\n")
+
 
 f.close()
             

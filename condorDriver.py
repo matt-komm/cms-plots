@@ -16,13 +16,13 @@ ROOT.gSystem.Load("libpowerlib.so")
 
 ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.SetStyle("Plain")
-InputBuilder.findSampleFiles("/nfs/user/mkomm/stpol_step3/Oct28_reproc_v5")
+InputBuilder.findSampleFiles("/nfs/user/mkomm/stpol_step3/Oct28_reproc_v6")
 
 
 globalPosition.makeLegendOutside()
 
 def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightData,binning):
-    cv=CanvasResiduen(widthCM=9,margins=globalPosition.canvas,resRange=[0.6,1.4])
+    cv=CanvasResiduen(widthCM=8.5,margins=globalPosition.canvas,resRange=[0.6,1.4])
     cv.setCoordinateStyle(CoordinateStyle(xtitle=varName,unit=unit,ytitle="Events",unitBinning=binning))
     legend=Legend(position=globalPosition.legend)
     cv.addDrawable(legend)
@@ -79,6 +79,7 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
     cv.draw()
     #cv.wait()    
     cv.save(name+".pdf")
+    cv.save(name+".png")
     
 #makePlot("mu_2j1t_top_pt","MC_mu_single","data_mu","top_pt","pT(top)","GeV","#mu+jets, 2j1t, 16.9",c2j1t+qcd+lumiMu,c2j1t+qcd,EquiBinning(50,0,250))
 '''

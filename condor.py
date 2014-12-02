@@ -22,14 +22,14 @@ if __name__=="__main__":
     print "stackMC: ",options.stackMC
     print "stackData: ",options.stackData
     print "variable: ",options.var
-    print "variable title: ",options.varName
+    print "variable title: ",options.varName.replace("--"," ")
     print "variable unit: ",options.unit
-    print "text: ",options.text
+    print "text: ",options.text.replace("--"," ")
     print "weight MC: ",options.weightMC
     print "weight data: ",options.weightData
     print "binning: ",eval(options.binning)
     
     makePlot(options.name,options.stackMC,options.stackData,
-    options.var,options.varName,options.unit,options.text,Weight(options.weightMC),Weight(options.weightData),EquiBinning(*eval(options.binning)))
+    options.var,options.varName.replace("--"," "),options.unit,options.text.replace("--"," "),Weight(options.weightMC),Weight(options.weightData),EquiBinning(*eval(options.binning)))
     
     
