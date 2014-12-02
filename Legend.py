@@ -25,7 +25,13 @@ class Legend(Drawable):
         self._legendEntries.append(legendEntry)
         
     def draw(self,canvas,strech=Strech(),addOptions=""):
-        self._legend=ROOT.TLegend(self._xmin*strech.xminStrech,self._ymin*strech.yminStrech,self._xmax*strech.xmaxStrech,self._ymax*strech.ymaxStrech)
+        self._ymin=self._ymax
+        textHeight=0.7*ROOT.FontMetrics.GetTextWidth(43,self.textsize*strech.fontStrech,"Test")/canvas.heightPx
+        for entry in self._legendEntries:
+            self._ymin-=textHeight
+            if entry.addtitle!="":
+                self._ymin-=textHeight
+        self._legend=ROOT.TLegend(self._xmin,self._ymin,self._xmax,self._ymax)
         self._legend.SetFillColor(0)
         self._legend.SetBorderSize(0)
         self._legend.SetTextFont(43)

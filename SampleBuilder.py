@@ -44,6 +44,28 @@ addSample(
     LegendEntry(title="EWK",drawOptions="F",priority=0)
 )
 
+
+
+addSample(
+    "QCDMu",
+    ["AntiIsoSingleMu","AntiIsotChanLeptons","AntiIsosChan",
+    "AntiIsotWChan","AntiIsoTTJetsDi","AntiIsoTTJetsSemi",
+    "AntiIsoDY","AntiIsoDiBoson","AntiIsoWJetsExcl"],
+    HistogramStyle.createFilled(newColor(0.65,0.65,0.65)),
+    LegendEntry(title="QCD",drawOptions="F",priority=0),
+    ((c2j0t*qcd_sf["mu"]["2j0t"])+(c2j1t*qcd_sf["mu"]["2j1t"])+(c3j1t*qcd_sf["mu"]["3j1t"])+(c3j2t*qcd_sf["mu"]["3j2t"])).get()
+)
+
+addSample(
+    "QCDEle",
+    ["AntiIsoSingleEle","AntiIsotChanLeptons","AntiIsosChan",
+    "AntiIsotWChan","AntiIsoTTJetsDi","AntiIsoTTJetsSemi",
+    "AntiIsoDY","AntiIsoDiBoson","AntiIsoWJetsExcl"],
+    HistogramStyle.createFilled(newColor(0.65,0.65,0.65)),
+    LegendEntry(title="QCD",drawOptions="F",priority=0),
+    ((c2j0t*qcd_sf["ele"]["2j0t"])+(c2j1t*qcd_sf["ele"]["2j1t"])+(c3j1t*qcd_sf["ele"]["3j1t"])+(c3j2t*qcd_sf["ele"]["3j2t"])).get()
+)
+
 #--------- more components --------------------
 
 addSample("tChan",
@@ -88,7 +110,7 @@ addSample(
 addSample(
     "other",
     ["DY","DiBoson"],
-    HistogramStyle.createFilled(newColor(0.5,0.5,0.5)),
+    HistogramStyle.createFilled(newColor(0.1,0.5,1.0)),
     LegendEntry(title="DY+VV",drawOptions="F",priority=0)
 )
 

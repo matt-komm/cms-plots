@@ -16,8 +16,10 @@ ROOT.gSystem.Load("libpowerlib.so")
 
 ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.SetStyle("Plain")
+
 InputBuilder.findSampleFiles("/nfs/user/mkomm/stpol_step3/Oct28_reproc_v6")
 
+InputBuilder.findSampleFiles("/home/mkomm/Analysis/STpol/Oct28_reproc_v6")
 
 globalPosition.makeLegendOutside()
 
@@ -42,7 +44,8 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
                 #sys.stdout.flush()
                 print inputSet.datafiles[i]
-                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_MC.weight+sample.weight+inputSet.weight+weightMC).get())
+                #print (stackSet_MC.weight+sample.weight+inputSet.weight+weightMC).get()
+                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_MC.weight*sample.weight*inputSet.weight*weightMC).get())
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
                 p.Project()
                 #break
@@ -63,7 +66,8 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
                 #sys.stdout.flush()
                 print inputSet.datafiles[i]
-                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_data.weight+sample.weight+inputSet.weight+weightData).get())
+                #print (stackSet_data.weight+sample.weight+inputSet.weight+weightData).get()
+                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_data.weight*sample.weight*inputSet.weight*weightData).get())
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
                 p.Project()
                 #break
@@ -81,7 +85,7 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
     cv.save(name+".pdf")
     cv.save(name+".png")
     
-#makePlot("mu_2j1t_top_pt","MC_mu_single","data_mu","top_pt","pT(top)","GeV","#mu+jets, 2j1t, 16.9",c2j1t+qcd+lumiMu,c2j1t+qcd,EquiBinning(50,0,250))
+makePlot("mu_2j0t_qcd_bdt","MC_mu_single","data_mu","bdt_qcd","QCD BDT","GeV","#mu+jets, 2j0t, 16.9",c2j0t*lumiMu,c2j0t,EquiBinning(50,-1,1))
 '''
 for category in [["3j2t",c3j2t]]:#,["2j1t",c2j1t],["3j1t",c3j1t]]:#,["3j2t",c3j2t]]:
     for var in [
