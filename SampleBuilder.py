@@ -76,7 +76,7 @@ addSample("tChan",
 
 addSample("otherST",
     ["sChan","tWChan"],
-    HistogramStyle.createFilled(newColor(0.7,0.0,0.45)),
+    HistogramStyle.createFilled(newColor(0.55,0.0,0.25)),
     LegendEntry(title="s+tW",drawOptions="F",priority=0),
 )
 
@@ -86,18 +86,26 @@ addSample("ttbar",
     LegendEntry(title="tt-pair",drawOptions="F",priority=0),
 )
 
+addSample("ttbarSemi",
+    ["TTJetsSemi"],
+    HistogramStyle.createFilled(newColor(1.0,0.65,0.0)),
+    LegendEntry(title="tt-pair",drawOptions="F",priority=0),
+)
+
 addSample(
     "WJetsExclBF",
     ["WJetsExclBF"],
     HistogramStyle.createFilled(newColor(0.0,0.5,0.0)),
-    LegendEntry(title="W+bX",drawOptions="F",priority=0)
+    LegendEntry(title="W+bX",drawOptions="F",priority=0),
+    "1.3"
 )
 
 addSample(
     "WJetsExclCF",
     ["WJetsExclCF"],
     HistogramStyle.createFilled(newColor(0.0,0.75,0.35)),
-    LegendEntry(title="W+cX",drawOptions="F",priority=0)
+    LegendEntry(title="W+cX",drawOptions="F",priority=0),
+    "1.3"
 )
 
 addSample(

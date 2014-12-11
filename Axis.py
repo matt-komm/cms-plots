@@ -85,8 +85,12 @@ class CoordinateStyle:
             diff = self.unitBinning.getArray()[1]-self.unitBinning.getArray()[0]
             if diff==1.0*int(diff):
                 self.yaxis.unit=" / "+str(int(diff))+" "+unit
-            else:
+            elif (round(diff,2)>=0.02):
                 self.yaxis.unit=" / "+str(round(diff,2))+" "+unit
+            elif (1000.0*diff)==1.0*int(1000.0*diff):
+                self.yaxis.unit=" / "+str(int(diff*1000))+"#upoint 10^{-3} "+unit
+            else:
+                self.yaxis.unit=" / "+str(round(diff*1000,2))+"#upoint 10^{-3} "+unit
         self.xaxis.applyStyle(rootGrid.GetXaxis())
         self.yaxis.applyStyle(rootGrid.GetYaxis())
         

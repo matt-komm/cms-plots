@@ -17,11 +17,44 @@ ROOT.gSystem.Load("libpowerlib.so")
 ROOT.gROOT.SetBatch(True)
 ROOT.gROOT.SetStyle("Plain")
 
-InputBuilder.findSampleFiles("/nfs/user/mkomm/stpol_step3/Oct28_reproc_v6")
+InputBuilder.findSampleFiles("/nfs/user/mkomm/stpol_step3/Oct28_reproc_v8")
 
-InputBuilder.findSampleFiles("/home/mkomm/Analysis/STpol/Oct28_reproc_v6")
+#InputBuilder.findSampleFiles("/home/mkomm/Analysis/STpol/Oct28_reproc_v6")
 
 globalPosition.makeLegendOutside()
+
+def makePlotMConly(name,mcstack,var,varName,unit,lumiText,weightMC,binning):
+    cv=CanvasResiduen(widthCM=8.5,margins=globalPosition.canvas,resRange=[0.6,1.4])
+    cv.setCoordinateStyle(CoordinateStyle(xtitle=varName,unit=unit,ytitle="Events",unitBinning=binning))
+    legend=Legend(position=globalPosition.legend)
+    cv.addDrawable(legend)
+    cv.addDrawable(InfoText.createCMSText(orientation=InfoText.SIDEWAYS,position=globalPosition.cmstext))
+    cv.addDrawable(InfoText.createLumiText(lumi=lumiText,position=globalPosition.lumi))
+
+    stackSet_MC = StackBuilder.stackDict[mcstack]
+    stackPlot_MC = Stack()
+    for sample in stackSet_MC.getSamples():
+        sampleHist=Histogram1D.createEmpty(binning)
+        sampleHist.setStyle(sample.histStyle)
+        legendEntry=sample.legendEntry
+        legendEntry.rootObj=sampleHist.getRootHistogram()
+        legend.addEntry(legendEntry)
+        for inputSet in sample.getInputs():
+            for i in range(len(inputSet.datafiles)):
+                #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
+                #sys.stdout.flush()
+                print inputSet.datafiles[i]
+                print (stackSet_MC.weight*sample.weight*inputSet.weight*weightMC).get()
+                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_MC.weight*sample.weight*inputSet.weight*weightMC).get())
+                p.addFriend(inputSet.weightfiles[i],"dataframe")
+                p.Project()
+                #break
+            print   
+        stackPlot_MC.addHistogram(sampleHist)
+    cv.addDrawable(stackPlot_MC)
+    cv.draw()
+    cv.save(name+".pdf")
+    cv.save(name+".png")
 
 def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightData,binning):
     cv=CanvasResiduen(widthCM=8.5,margins=globalPosition.canvas,resRange=[0.6,1.4])
@@ -85,7 +118,9 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
     cv.save(name+".pdf")
     cv.save(name+".png")
     
-makePlot("mu_2j0t_qcd_bdt","MC_mu_single","data_mu","bdt_qcd","QCD BDT","GeV","#mu+jets, 2j0t, 16.9",c2j0t*lumiMu,c2j0t,EquiBinning(50,-1,1))
+makePlot("mu_2j1t_C","MC_mu_single","data_mu","bdt_qcd","QCD BDT","GeV","#mu+jets, 2j0t, 16.9",c2j1t*lumiMu,c2j1t,EquiBinning(50,-1,1))
+
+#makePlotMConly("ttonly_bdt_qcd","ttonly","bdt_qcd","BDT QCD","GeV","#mu+jets, 2j1t, 10^{-3}",c2j1t,EquiBinning(30,-1,1))
 '''
 for category in [["3j2t",c3j2t]]:#,["2j1t",c2j1t],["3j1t",c3j1t]]:#,["3j2t",c3j2t]]:
     for var in [
