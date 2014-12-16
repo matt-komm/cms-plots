@@ -50,6 +50,7 @@ def makePlotMConly(name,mcstack,var,varName,unit,lumiText,weightMC,binning):
                 p.Project()
                 #break
             print   
+        sampleHist.removeNegativeEntries()
         stackPlot_MC.addHistogram(sampleHist)
     cv.addDrawable(stackPlot_MC)
     cv.draw()
@@ -82,7 +83,8 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
                 p.Project()
                 #break
-            print   
+            print  
+        sampleHist.removeNegativeEntries() 
         stackPlot_MC.addHistogram(sampleHist)
     cv.addDrawable(stackPlot_MC)
 
@@ -105,6 +107,7 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 p.Project()
                 #break
             print   
+        sampleHist.removeNegativeEntries()
         stackPlot_data.addHistogram(sampleHist)
     cv.addDrawable(stackPlot_data)
 
@@ -118,9 +121,76 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
     cv.save(name+".pdf")
     cv.save(name+".png")
     
-makePlot("mu_2j1t_C","MC_mu_single","data_mu","bdt_qcd","QCD BDT","GeV","#mu+jets, 2j0t, 16.9",c2j1t*lumiMu,c2j1t,EquiBinning(50,-1,1))
+def makeHists(name,sysVariation,mcstack,datastack,var,weightMC,weightData,binning):
+    outFile = ROOT.TFile(name+".root","RECREATE")
+    
+    #theta naming
+    #<observable>__<process>__<uncertainty>__(plus,minus) 
+    #<observable>_DATA
+    
+    fakeData=Histogram1D.createEmpty(binning)
+    fakeData.getRootHistogram().SetDirectory(outFile)
+    fakeData.getRootHistogram().SetName(var+"_"+name+"__FakeDATA")
+    stackSet_MC = StackBuilder.stackDict[mcstack]
+    for sample in stackSet_MC.getSamples():
+        sampleHist=Histogram1D.createEmpty(binning)
+        sampleHist.getRootHistogram().SetDirectory(outFile)
+        if (sysVariation!=""):
+            sampleHist.getRootHistogram().SetName(var+"_"+name+"__"+sample.name)
+        else:
+            sampleHist.getRootHistogram().SetName(var+"_"+name+"__"+sample.name+"__"+sysVariation)
+        for inputSet in sample.getInputs():
+            for i in range(len(inputSet.datafiles)):
+                #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
+                #sys.stdout.flush()
+                print inputSet.datafiles[i]
+                #print (stackSet_MC.weight+sample.weight+inputSet.weight+weightMC).get()
+                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_MC.weight*sample.weight*inputSet.weight*weightMC).get())
+                p.addFriend(inputSet.weightfiles[i],"dataframe")
+                p.Project()
+                #break
+            print
+        sampleHist.removeNegativeEntries()
+        fakeData.addHistogram(sampleHist)
+        
+        outFile.cd()
+        #sampleHist.Write()
+        
+        
 
-#makePlotMConly("ttonly_bdt_qcd","ttonly","bdt_qcd","BDT QCD","GeV","#mu+jets, 2j1t, 10^{-3}",c2j1t,EquiBinning(30,-1,1))
+    stackSet_data = StackBuilder.stackDict[datastack]
+    for sample in stackSet_data.getSamples():
+        sampleHist=Histogram1D.createEmpty(binning)
+        sampleHist.getRootHistogram().SetDirectory(outFile)
+        sampleHist.getRootHistogram().SetName(var+"_"+name+"__DATA")
+        for inputSet in sample.getInputs():
+            for i in range(len(inputSet.datafiles)):
+                #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
+                #sys.stdout.flush()
+                print inputSet.datafiles[i]
+                #print (stackSet_data.weight+sample.weight+inputSet.weight+weightData).get()
+                p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_data.weight*sample.weight*inputSet.weight*weightData).get())
+                p.addFriend(inputSet.weightfiles[i],"dataframe")
+                p.Project()
+                #break
+            print
+        sampleHist.removeNegativeEntries()
+        outFile.cd()
+        #sampleHist.Write()
+    outFile.Write()
+    outFile.Close()   
+        
+makeHists("mu_2j1t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c2j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c2j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(25,-1,0))
+#makeHists("mu_3j1t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c3j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c3j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(50,-1,1))
+#makeHists("mu_3j2t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c3j2t*lumiMu*Weight("(bdt_qcd>0.4)"),c3j2t*Weight("(bdt_qcd>0.4)"),EquiBinning(50,-1,1))
+
+#makeHists("ele_2j1t","nominal","MC_ele_fit","data_ele","bdt_sig_bg",c2j1t*lumiEle*Weight("(bdt_qcd>0.55)"),c2j1t*Weight("(bdt_qcd>0.55)"),EquiBinning(25,-1,0))
+#makeHists("ele_3j1t","nominal","MC_ele_fit","data_ele","bdt_sig_bg",c3j1t*lumiEle*Weight("(bdt_qcd>0.55)"),c3j1t*Weight("(bdt_qcd>0.55)"),EquiBinning(50,-1,1))
+#makeHists("ele_3j2t","nominal","MC_ele_fit","data_ele","bdt_sig_bg",c3j2t*lumiEle*Weight("(bdt_qcd>0.55)"),c3j2t*Weight("(bdt_qcd>0.55)"),EquiBinning(50,-1,1))
+
+#makePlot("mu_2j1t_bdt_sig_bg","MC_mu_fit","data_mu","bdt_sig_bg","signal BDT","","#mu+jets, 2j1t, 10^{-3}",c2j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c2j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(1,-0.05,0))
+
+#makePlotMConly("ttonly_ljet_rms","ttonly","ljet_rms","RMS ljet","","#mu+jets, 2j1t, 10^{-3}",c2j1t,EquiBinning(50,0.01))
 '''
 for category in [["3j2t",c3j2t]]:#,["2j1t",c2j1t],["3j1t",c3j1t]]:#,["3j2t",c3j2t]]:
     for var in [

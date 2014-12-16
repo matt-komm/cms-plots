@@ -6,7 +6,8 @@ from Style import *
 from Weight import *
 
 class SampleSource:
-    def __init__(self,inputList,histStyle,legendEntry, weightStr="1"):
+    def __init__(self,name,inputList,histStyle,legendEntry, weightStr="1"):
+        self.name=name
         self.inputList=inputList
         self.histStyle=histStyle
         self.legendEntry=legendEntry
@@ -22,7 +23,7 @@ class SampleSource:
 sampleDict={}
 
 def addSample(name,inputList,histStyle,legendEntry, weightStr="1"):
-    sampleDict[name]=SampleSource(inputList,histStyle,legendEntry,str(weightStr))
+    sampleDict[name]=SampleSource(name,inputList,histStyle,legendEntry,str(weightStr))
     
 #--------- 4 components --------------------
 addSample("signal",
@@ -84,12 +85,14 @@ addSample("ttbar",
     ["TTJetsDi","TTJetsSemi"],
     HistogramStyle.createFilled(newColor(1.0,0.65,0.0)),
     LegendEntry(title="tt-pair",drawOptions="F",priority=0),
+    "1.1"
 )
 
 addSample("ttbarSemi",
     ["TTJetsSemi"],
     HistogramStyle.createFilled(newColor(1.0,0.65,0.0)),
     LegendEntry(title="tt-pair",drawOptions="F",priority=0),
+    "1.1"
 )
 
 addSample(
@@ -113,6 +116,13 @@ addSample(
     ["WJetsExclLF"],
     HistogramStyle.createFilled(newColor(0.0,1.0,0.45)),
     LegendEntry(title="W+LF",drawOptions="F",priority=0)
+)
+
+addSample(
+    "WJetsExcl",
+    ["WJetsExcl"],
+    HistogramStyle.createFilled(newColor(0.0,0.75,0.35)),
+    LegendEntry(title="W+jets",drawOptions="F",priority=0)
 )
 
 addSample(

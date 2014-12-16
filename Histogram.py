@@ -135,6 +135,11 @@ class Histogram1D(Drawable):
     def getStyle(self):
         return self._style
         
+    def removeNegativeEntries(self):
+        for ibin in range(self._rootHistogram.GetNbinsX()+2):
+            self._rootHistogram.SetBinContent(ibin,max(0.0,self._rootHistogram.GetBinContent(ibin)))
+            
+        
     def setLegend(self,title,drawOptions,addtitle="",priority=0):
         self._legend=LegendEntry()
         self._legend.title=title

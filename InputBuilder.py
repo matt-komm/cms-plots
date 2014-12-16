@@ -1,8 +1,10 @@
 import os
+import copy
 from Weight import *
 
 class InputSource:
-    def __init__(self,folderList,weightStr="1"):
+    def __init__(self,name,folderList,weightStr="1"):
+        self.name=name
         self.folderList=folderList
         self.weight=Weight(weightStr)
         self.datafiles=[]
@@ -12,11 +14,13 @@ class InputSource:
 inputDict = {}
 
 def addInput(name,folderList,weightStr="1"):
-    inputDict[name]=InputSource(folderList,str(weightStr))
+    inputDict[name]=InputSource(name,folderList,str(weightStr))
+    
+def cloneInputs(nameList,postFix):
+    for name in nameList:
+        inputDict[name+postFix]=copy.deepcopy(inputDict[name])
 
 #signal    
-addInput("tChan",["iso/nominal/T_t","iso/nominal/Tbar_t"],
-    "pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
 addInput("tChanLeptons",["iso/nominal/T_t_ToLeptons","iso/nominal/Tbar_t_ToLeptons"],
     "pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
 
@@ -68,8 +72,111 @@ wjetsFolders=["antiiso/nominal/W1JetsToLNu","antiiso/nominal/W2JetsToLNu2","anti
 addInput("AntiIsoWJetsExcl",wjetsFolders,"(-1)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
 
 
+##### create systematic variations
+
+
+#Qscale t-channel
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__qscale_tch__plus"
+)
+inputDict["tChanLeptons__qscale_tch__plus"].folderList=["iso/SYST/T_t_ToLeptons_scaleup","iso/SYST/Tbar_t_ToLeptons_scaleup"]
+
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__qscale_tch__minus"
+)
+inputDict["tChanLeptons__qscale_tch__minus"].folderList=["iso/SYST/T_t_ToLeptons_scaledown","iso/SYST/Tbar_t_ToLeptons_scaledown"]
+
+
+
+
+#Qscale ttbar
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__qscale_ttbar__plus"
+)
+inputDict["TTJetsSemi__qscale_ttbar__plus"].folderList=["iso/SYST/TTJets_scaleup"]
+inputDict["TTJetsDi__qscale_ttbar__plus"].folderList=[]
+
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__qscale_ttbar__minus"
+)
+inputDict["TTJetsSemi__qscale_ttbar__minus"].folderList=["iso/SYST/TTJets_scaledown"]
+inputDict["TTJetsDi__qscale_ttbar__minus"].folderList=[]
+
+
+
+
+
+#Qscale Wjets
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__qscale_wjets__plus"
+)
+inputDict["WJetsExcl__qscale_wjets__plus"].folderList=["iso/SYST/W1JetsToLNu_scaleup","iso/SYST/W2JetsToLNu_scaleup","iso/SYST/W3JetsToLNu_scaleup","iso/SYST/W4JetsToLNu_scaleup"]
+inputDict["WJetsExclBF__qscale_wjets__plus"].folderList=["iso/SYST/W1JetsToLNu_scaleup","iso/SYST/W2JetsToLNu_scaleup","iso/SYST/W3JetsToLNu_scaleup","iso/SYST/W4JetsToLNu_scaleup"]
+inputDict["WJetsExclCF__qscale_wjets__plus"].folderList=["iso/SYST/W1JetsToLNu_scaleup","iso/SYST/W2JetsToLNu_scaleup","iso/SYST/W3JetsToLNu_scaleup","iso/SYST/W4JetsToLNu_scaleup"]
+inputDict["WJetsExclLF__qscale_wjets__plus"].folderList=["iso/SYST/W1JetsToLNu_scaleup","iso/SYST/W2JetsToLNu_scaleup","iso/SYST/W3JetsToLNu_scaleup","iso/SYST/W4JetsToLNu_scaleup"]
+
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__qscale_wjets__minus"
+)
+inputDict["WJetsExcl__qscale_wjets__minus"].folderList=["iso/SYST/W1JetsToLNu_scaledown","iso/SYST/W2JetsToLNu_scaledown","iso/SYST/W3JetsToLNu_scaledown","iso/SYST/W4JetsToLNu_scaledown"]
+inputDict["WJetsExclBF__qscale_wjets__minus"].folderList=["iso/SYST/W1JetsToLNu_scaledown","iso/SYST/W2JetsToLNu_scaledown","iso/SYST/W3JetsToLNu_scaledown","iso/SYST/W4JetsToLNu_scaledown"]
+inputDict["WJetsExclCF__qscale_wjets__minus"].folderList=["iso/SYST/W1JetsToLNu_scaledown","iso/SYST/W2JetsToLNu_scaledown","iso/SYST/W3JetsToLNu_scaledown","iso/SYST/W4JetsToLNu_scaledown"]
+inputDict["WJetsExclLF__qscale_wjets__minus"].folderList=["iso/SYST/W1JetsToLNu_scaledown","iso/SYST/W2JetsToLNu_scaledown","iso/SYST/W3JetsToLNu_scaledown","iso/SYST/W4JetsToLNu_scaledown"]
+
+
+
+
+#top mass
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__top_mass__plus"
+)
+inputDict["TTJetsSemi__top_mass__plus"].folderList=["iso/SYST/TTJets_mass175_5"]
+inputDict["TTJetsDi__top_mass__plus"].folderList=[]
+inputDict["tChanLeptons__top_mass__plus"].folderList=["T_t_ToLeptons_mass175_5","Tbar_t_ToLeptons_mass175_5"]
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__top_mass__minus"
+)
+inputDict["TTJetsSemi__top_mass__minus"].folderList=["iso/SYST/TTJets_mass169_5"]
+inputDict["TTJetsDi__top_mass__minus"].folderList=[]
+inputDict["tChanLeptons__top_mass__minus"].folderList=["T_t_ToLeptons_mass169_5","Tbar_t_ToLeptons_mass169_5"]
+
+
+#wjets shape, hf,lf
+#...
+
+#top pt
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__top_pt__plus"
+)
+inputDict["TTJetsDi__top_pt__plus"].weight*=Weight("top_weight__up/top_weight")
+inputDict["TTJetsSemi__top_pt__plus"].weight*=Weight("top_weight__up/top_weight")
+inputDict["TTJetsFull__top_pt__plus"].weight*=Weight("top_weight__up/top_weight")
+
+cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
+    "__top_pt__minus"
+)
+inputDict["TTJetsDi__top_pt__minus"].weight*=Weight("top_weight__down/top_weight")
+inputDict["TTJetsSemi__top_pt__minus"].weight*=Weight("top_weight__down/top_weight")
+inputDict["TTJetsFull__top_pt__minus"].weight*=Weight("top_weight__down/top_weight")
+
+
+
+#wjets matching
+
+#ttbar matching
+
+#PDF
+#...
+
+#JES
+#...
+
+
+
+
+
 def findSampleFiles(basedir):
-    for inputName in inputDict.keys():
+    for inputName in sorted(inputDict.keys()):
         inputDict[inputName].files=[]
         inputDict[inputName].weights=[]
         for folder in inputDict[inputName].folderList:
@@ -86,4 +193,5 @@ def findSampleFiles(basedir):
             print "ERROR"
         inputDict[inputName].datafiles=sorted(inputDict[inputName].datafiles)
         inputDict[inputName].weightfiles=sorted(inputDict[inputName].weightfiles)
+        
 

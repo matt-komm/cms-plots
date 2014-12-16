@@ -1,3 +1,5 @@
+import math
+
 class AxisStyle:
     def __init__(self,title="",fontScale=1.0,offsetScale=1.0,thickScale=1.0):
         self.fontScale=fontScale
@@ -82,15 +84,17 @@ class CoordinateStyle:
                 self.xaxis.unit=" ("+unit+")"
             else:
                 unit="units"
+            
             diff = self.unitBinning.getArray()[1]-self.unitBinning.getArray()[0]
             if diff==1.0*int(diff):
                 self.yaxis.unit=" / "+str(int(diff))+" "+unit
             elif (round(diff,2)>=0.02):
                 self.yaxis.unit=" / "+str(round(diff,2))+" "+unit
-            elif (1000.0*diff)==1.0*int(1000.0*diff):
-                self.yaxis.unit=" / "+str(int(diff*1000))+"#upoint 10^{-3} "+unit
+            elif int(10000.0*diff)==int(10.0*int(1000.0*diff)):
+            
+                self.yaxis.unit=" / "+str(int(diff*1000))+"#scale[0.68]{#times10^{-3}} "+unit
             else:
-                self.yaxis.unit=" / "+str(round(diff*1000,2))+"#upoint 10^{-3} "+unit
+                self.yaxis.unit=" / "+str(round(diff*1000,2))+"#scale[0.68]{#times10^{-3}} "+unit
         self.xaxis.applyStyle(rootGrid.GetXaxis())
         self.yaxis.applyStyle(rootGrid.GetYaxis())
         
