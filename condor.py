@@ -18,6 +18,7 @@ if __name__=="__main__":
     parser.add_option("--binning", dest="binning", default="")
     parser.add_option("--mode", dest="mode", default="plot")
     parser.add_option("--sys", dest="sys", default="nominal")
+    parser.add_option("--addtext", dest="addtext", default="")
     (options, args) = parser.parse_args()
     
     print "mode: ",options.mode
@@ -33,14 +34,15 @@ if __name__=="__main__":
     print "binning: ",eval(options.binning)
     print "sys: ",options.sys
     
-    if options.mode=="plots":
-        makePlot(options.name,options.stackMC,options.stackData,
+    if options.mode=="plot":
+        makePlot(options.name.replace("--","_"),options.stackMC,options.stackData,
             options.var,options.varName.replace("--"," "),options.unit,
             options.text.replace("--"," "),Weight(options.weightMC),
-            Weight(options.weightData),EquiBinning(*eval(options.binning))
+            Weight(options.weightData),EquiBinning(*eval(options.binning)),
+            options.addtext.replace("--"," ")
         )
     if options.mode=="hist":
-        makeHist(name,options.sys,options.stackMC,options.stackData,
+        makeHist(options.name.replace("--","_"),options.sys,options.stackMC,options.stackData,
             options.var,options.varName.replace("--"," "),options.unit,
             options.text.replace("--"," "),Weight(options.weightMC),
             Weight(options.weightData),EquiBinning(*eval(options.binning))

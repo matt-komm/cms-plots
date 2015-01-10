@@ -20,7 +20,8 @@ class Position:
     class Lumi:
         RIGHT=BoundingBox(BoundingBox.PERCENTS,0.6,0.997,0.965,0.997)
         
-        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.39,0.997,0.75,0.997)
+        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.8,0.997,0.8,0.997)
+        
         
     class Canvas:
         FILLED=BoundingBox(BoundingBox.PERCENTS,0.16,0.14,1-0.055,1-0.065)

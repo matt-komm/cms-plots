@@ -103,7 +103,7 @@ class Canvas:
         self._grid=None
         
         self._constSpace={"xmin":0.0,"xmax":0.0,"ymin":0.0,"ymax":0.0}
-        self._factorSpace={"xmin":1.0,"xmax":1.0,"ymin":1.0,"ymax":1.1}
+        self._factorSpace={"xmin":1.0,"xmax":1.0,"ymin":1.0,"ymax":1.13}
         
         #print self.rootCanvas.GetXsizeReal(),self.rootCanvas.GetYsizeReal()
         

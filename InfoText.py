@@ -14,7 +14,7 @@ class TextItem:
 
 class InfoText(Drawable):
     SIDEWAYS,STACKED=range(2)
-    def __init__(self,textItemList=[],orientation=SIDEWAYS,position=Position.CMSText.LEFT_SIDEWAYS,alignment=11):
+    def __init__(self,textItemList=[],orientation=SIDEWAYS,position=Position.CMSText.LEFT_SIDEWAYS,alignment=13):
         Drawable.__init__(self,hasAxis=False, allowLayout=True)
         self.textItemList=textItemList
         self._orientation=orientation
@@ -37,7 +37,15 @@ class InfoText(Drawable):
         if addtext!="":
             textItemList.append(TextItem(addtext,53,10))
         infoText = InfoText(textItemList,position=position,orientation=orientation)
-        return infoText  
+        return infoText 
+        
+    @staticmethod
+    def createTestInfo(chi2,ks,position,orientation):
+        textItemList=[]
+        textItemList.append(TextItem("#lower[-0.1]{#chi^{2}}:"+str(round(chi2,1))+"% KS:"+str(round(ks,1))+"%",43,7.5))
+
+        infoText = InfoText(textItemList,position=position,alignment=13,orientation=orientation)
+        return infoText 
     
     @staticmethod
     def createLumiText(position=Position.Lumi.RIGHT,alignment=33,lumi="19.7"):
@@ -60,7 +68,7 @@ class InfoText(Drawable):
                 self.rootPaveText=ROOT.TPaveText(xstart,self._ymin,xstart,self._ymin,"NDC")
                 self.rootPaveText.SetFillColor(0)
                 self.rootPaveText.SetFillStyle(0)
-                self.rootPaveText.SetTextAlign(13) 
+                self.rootPaveText.SetTextAlign(self._alignment) 
                 self.rootPaveText.SetBorderSize(0)
                 self.rootPaveText.SetTextFont(item.font)
                 self.rootPaveText.SetTextSize(item.size*strech.fontStrech)
@@ -72,12 +80,12 @@ class InfoText(Drawable):
             ystart=self._ymin
             yend=self._ymin
             for i,item in enumerate(self.textItemList):  
-                ystart-=1.0*ROOT.FontMetrics.GetTextHeight(item.font,item.size*strech.fontStrech,item.text)/canvas.heightPx-0.004
-                print ystart,yend,item.text
+                ystart-=1.0*ROOT.FontMetrics.GetTextHeight(item.font,item.size*strech.fontStrech,item.text)/canvas.heightPx+0.01
+                #print ystart,yend,item.text
                 self.rootPaveText=ROOT.TPaveText(self._xmin,ystart,self._xmin,ystart,"NDC")
                 self.rootPaveText.SetFillColor(0)
                 self.rootPaveText.SetFillStyle(0)
-                self.rootPaveText.SetTextAlign(11) 
+                self.rootPaveText.SetTextAlign(self._alignment) 
                 self.rootPaveText.SetBorderSize(0)
                 self.rootPaveText.SetTextFont(item.font)
                 self.rootPaveText.SetTextSize(item.size*strech.fontStrech)

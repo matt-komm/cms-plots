@@ -6,6 +6,7 @@ class InputSource:
     def __init__(self,name,folderList,weightStr="1"):
         self.name=name
         self.folderList=folderList
+
         self.weight=Weight(weightStr)
         self.datafiles=[]
         self.weightfiles=[]
@@ -14,7 +15,7 @@ class InputSource:
 inputDict = {}
 
 def addInput(name,folderList,weightStr="1"):
-    inputDict[name]=InputSource(name,folderList,str(weightStr))
+    inputDict[name]=InputSource(name,folderList,weightStr)
     
 def cloneInputs(nameList,postFix):
     for name in nameList:
@@ -73,7 +74,7 @@ addInput("AntiIsoWJetsExcl",wjetsFolders,"(-1)*pu_weight*b_weight*lepton_weight_
 
 
 ##### create systematic variations
-
+'''
 
 #Qscale t-channel
 cloneInputs(["tChanLeptons","sChan","tWChan","WJetsExclBF","WJetsExclCF","WJetsExclLF","WJetsExcl","TTJetsDi","TTJetsSemi","TTJetsFull","DY","DiBoson"],
@@ -171,7 +172,7 @@ inputDict["TTJetsFull__top_pt__minus"].weight*=Weight("top_weight__down/top_weig
 #JES
 #...
 
-
+'''
 
 
 

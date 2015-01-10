@@ -9,7 +9,7 @@ import InputBuilder
 import SampleBuilder
 import StackBuilder
 
-import os, sys
+import os, sys, random
 
 import ROOT
 ROOT.gSystem.Load("libpowerlib.so")
@@ -22,6 +22,42 @@ InputBuilder.findSampleFiles("/nfs/user/mkomm/stpol_step3/Oct28_reproc_v8")
 #InputBuilder.findSampleFiles("/home/mkomm/Analysis/STpol/Oct28_reproc_v6")
 
 globalPosition.makeLegendOutside()
+
+def getChi2(mcHist,dataHist):
+    bins=[]
+    for ibin in range(dataHist.GetNbinsX()):
+        if dataHist.GetBinContent(ibin+1)>0.0000000001:
+            bins.append(ibin+1)
+    newHistMC=ROOT.TH1F("newHistMC"+str(random.random()),"",len(bins),0,len(bins))
+    newHistMC.Sumw2()
+    newHistData=ROOT.TH1F("newHistData"+str(random.random()),"",len(bins),0,len(bins))
+    newHistData.Sumw2()
+    for i,ibin in enumerate(bins):
+        newHistMC.SetBinContent(i+1,mcHist.GetBinContent(ibin))
+        newHistMC.SetBinError(i+1,mcHist.GetBinError(ibin))
+        
+        newHistData.SetBinContent(i+1,dataHist.GetBinContent(ibin))
+        newHistData.SetBinError(i+1,dataHist.GetBinError(ibin))
+    
+    return newHistMC.Chi2Test(newHistData,"WW")
+
+def getKS(mcHist,dataHist):
+    bins=[]
+    for ibin in range(dataHist.GetNbinsX()):
+        if dataHist.GetBinContent(ibin+1)>0.0000000001:
+            bins.append(ibin+1)
+    newHistMC=ROOT.TH1F("newHistMC"+str(random.random()),"",len(bins),0,len(bins))
+    newHistMC.Sumw2()
+    newHistData=ROOT.TH1F("newHistData"+str(random.random()),"",len(bins),0,len(bins))
+    newHistData.Sumw2()
+    for i,ibin in enumerate(bins):
+        newHistMC.SetBinContent(i+1,mcHist.GetBinContent(ibin))
+        newHistMC.SetBinError(i+1,mcHist.GetBinError(ibin))
+        
+        newHistData.SetBinContent(i+1,dataHist.GetBinContent(ibin))
+        newHistData.SetBinError(i+1,dataHist.GetBinError(ibin))
+    
+    return newHistMC.KolmogorovTest(newHistData)
 
 def makePlotMConly(name,mcstack,var,varName,unit,lumiText,weightMC,binning):
     cv=CanvasResiduen(widthCM=8.5,margins=globalPosition.canvas,resRange=[0.6,1.4])
@@ -57,7 +93,7 @@ def makePlotMConly(name,mcstack,var,varName,unit,lumiText,weightMC,binning):
     cv.save(name+".pdf")
     cv.save(name+".png")
 
-def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightData,binning):
+def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightData,binning,addText=""):
     cv=CanvasResiduen(widthCM=8.5,margins=globalPosition.canvas,resRange=[0.6,1.4])
     cv.setCoordinateStyle(CoordinateStyle(xtitle=varName,unit=unit,ytitle="Events",unitBinning=binning))
     legend=Legend(position=globalPosition.legend)
@@ -78,7 +114,6 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
                 #sys.stdout.write('%i/%i\r' % (i+1,len(inputSet.datafiles)))
                 #sys.stdout.flush()
                 print inputSet.datafiles[i]
-                #print (stackSet_MC.weight+sample.weight+inputSet.weight+weightMC).get()
                 p = ROOT.Projector(sampleHist.getRootHistogram(), inputSet.datafiles[i], "dataframe", var, (stackSet_MC.weight*sample.weight*inputSet.weight*weightMC).get())
                 p.addFriend(inputSet.weightfiles[i],"dataframe")
                 p.Project()
@@ -110,7 +145,27 @@ def makePlot(name,mcstack,datastack,var,varName,unit,lumiText,weightMC,weightDat
         sampleHist.removeNegativeEntries()
         stackPlot_data.addHistogram(sampleHist)
     cv.addDrawable(stackPlot_data)
-
+    if addText!="":
+        cv.addDrawable(InfoText.createTestInfo(
+            chi2=getChi2(stackPlot_MC.getSum().getRootHistogram(),stackPlot_data.getSum().getRootHistogram())*100.0,
+            ks=getKS(stackPlot_MC.getSum().getRootHistogram(),stackPlot_data.getSum().getRootHistogram())*100.0,
+         
+            position=BoundingBox(BoundingBox.PERCENTS,0.53,0.91,0.75,0.91),
+            orientation=InfoText.SIDEWAYS
+        ))
+    
+        cv.addDrawable(InfoText([TextItem(addText,63,7.5)],
+            position=BoundingBox(BoundingBox.PERCENTS,0.53,0.87,0.75,0.87),
+            orientation=InfoText.SIDEWAYS
+        ))
+    else:
+        cv.addDrawable(InfoText.createTestInfo(
+            chi2=getChi2(stackPlot_MC.getSum().getRootHistogram(),stackPlot_data.getSum().getRootHistogram())*100.0,
+            ks=getKS(stackPlot_MC.getSum().getRootHistogram(),stackPlot_data.getSum().getRootHistogram())*100.0,
+            
+            position=BoundingBox(BoundingBox.PERCENTS,0.53,0.895,0.75,0.895),
+            orientation=InfoText.SIDEWAYS
+        ))
     dataResHist=stackPlot_data.getSum()
     dataResHist.divideHistogram(stackPlot_MC.getSum())
     dataResHist.setStyle(HistogramStyle.createMarkers())
@@ -180,7 +235,7 @@ def makeHists(name,sysVariation,mcstack,datastack,var,weightMC,weightData,binnin
     outFile.Write()
     outFile.Close()   
         
-makeHists("mu_2j1t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c2j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c2j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(25,-1,0))
+#makeHists("mu_2j1t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c2j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c2j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(25,-1,0))
 #makeHists("mu_3j1t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c3j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c3j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(50,-1,1))
 #makeHists("mu_3j2t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c3j2t*lumiMu*Weight("(bdt_qcd>0.4)"),c3j2t*Weight("(bdt_qcd>0.4)"),EquiBinning(50,-1,1))
 
@@ -188,25 +243,7 @@ makeHists("mu_2j1t","nominal","MC_mu_fit","data_mu","bdt_sig_bg",c2j1t*lumiMu*We
 #makeHists("ele_3j1t","nominal","MC_ele_fit","data_ele","bdt_sig_bg",c3j1t*lumiEle*Weight("(bdt_qcd>0.55)"),c3j1t*Weight("(bdt_qcd>0.55)"),EquiBinning(50,-1,1))
 #makeHists("ele_3j2t","nominal","MC_ele_fit","data_ele","bdt_sig_bg",c3j2t*lumiEle*Weight("(bdt_qcd>0.55)"),c3j2t*Weight("(bdt_qcd>0.55)"),EquiBinning(50,-1,1))
 
-#makePlot("mu_2j1t_bdt_sig_bg","MC_mu_fit","data_mu","bdt_sig_bg","signal BDT","","#mu+jets, 2j1t, 10^{-3}",c2j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c2j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(1,-0.05,0))
+#makePlot("mu_2j1t_bdt_sig_bg","MC_mu_fit","data_mu","bdt_sig_bg","signal BDT","","#mu+jets, 2j1t, 10^{-3}",c2j1t*lumiMu*Weight("(bdt_qcd>0.4)"),c2j1t*Weight("(bdt_qcd>0.4)"),EquiBinning(1,-0.05,0),"cos#theta#in[0.6,0.7]")
 
 #makePlotMConly("ttonly_ljet_rms","ttonly","ljet_rms","RMS ljet","","#mu+jets, 2j1t, 10^{-3}",c2j1t,EquiBinning(50,0.01))
-'''
-for category in [["3j2t",c3j2t]]:#,["2j1t",c2j1t],["3j1t",c3j1t]]:#,["3j2t",c3j2t]]:
-    for var in [
-        ["mtw","MTW","GeV",EquiBinning(50,0,200)],
-        ["met","MET","GeV",EquiBinning(50,0,250)],
-        ["met_phi","#phi(MET)","",EquiBinning(50,-3.2,3.2)],
-        ["lepton_pt","pT(l)","GeV",EquiBinning(50,0,200)],
-        ["lepton_eta","#eta(l)","",EquiBinning(50,-2.5,2.5)],
-        ["lepton_iso","rel. iso","",EquiBinning(50,0,0.15)],
-        ["ljet_pt","pT(ljet)","",EquiBinning(50,0,400)],
-        ["ljet_eta","#eta(ljet)","",EquiBinning(50,-5,5)],
-        ["bjet_pt","pT(bjet)","",EquiBinning(50,0,400)],
-        ["bjet_eta","#eta(bjet)","",EquiBinning(50,-5,5)]
-    ]:
-        print category[0],var[0]
-        makePlot("mu_"+category[0]+"_"+var[0],"MC_mu_single","data_mu",var[0],var[1],var[2],"#mu+jets, "+category[0]+", 16.9",category[1]+qcd+lumiMu,category[1]+qcd,var[3])
-        makePlot("ele_"+category[0]+"_"+var[0],"MC_ele_single","data_ele",var[0],var[1],var[2],"e+jets, "+category[0]+", 18.9",category[1]+qcd+lumiEle,category[1]+qcd,var[3])
-        
-    '''
+

@@ -11,6 +11,7 @@ class SampleSource:
         self.inputList=inputList
         self.histStyle=histStyle
         self.legendEntry=legendEntry
+
         self.weight=Weight(weightStr)
         
         
@@ -23,7 +24,7 @@ class SampleSource:
 sampleDict={}
 
 def addSample(name,inputList,histStyle,legendEntry, weightStr="1"):
-    sampleDict[name]=SampleSource(name,inputList,histStyle,legendEntry,str(weightStr))
+    sampleDict[name]=SampleSource(name,inputList,histStyle,legendEntry,weightStr)
     
 #--------- 4 components --------------------
 addSample("signal",
@@ -73,26 +74,28 @@ addSample("tChan",
     ["tChanLeptons"],
     HistogramStyle.createFilled(newColor(1.0,0.0,0.7)),
     LegendEntry(title="t-ch.",drawOptions="F",priority=0),
+    tChannelSF
 )
 
 addSample("otherST",
     ["sChan","tWChan"],
     HistogramStyle.createFilled(newColor(0.55,0.0,0.25)),
     LegendEntry(title="s+tW",drawOptions="F",priority=0),
+    otherSTSF
 )
 
 addSample("ttbar",
     ["TTJetsDi","TTJetsSemi"],
     HistogramStyle.createFilled(newColor(1.0,0.65,0.0)),
     LegendEntry(title="tt-pair",drawOptions="F",priority=0),
-    "1.1"
+    ttbarSF
 )
 
 addSample("ttbarSemi",
     ["TTJetsSemi"],
     HistogramStyle.createFilled(newColor(1.0,0.65,0.0)),
     LegendEntry(title="tt-pair",drawOptions="F",priority=0),
-    "1.1"
+    ttbarSF
 )
 
 addSample(
@@ -100,7 +103,7 @@ addSample(
     ["WJetsExclBF"],
     HistogramStyle.createFilled(newColor(0.0,0.5,0.0)),
     LegendEntry(title="W+bX",drawOptions="F",priority=0),
-    "1.3"
+    WHFSF
 )
 
 addSample(
@@ -108,28 +111,31 @@ addSample(
     ["WJetsExclCF"],
     HistogramStyle.createFilled(newColor(0.0,0.75,0.35)),
     LegendEntry(title="W+cX",drawOptions="F",priority=0),
-    "1.3"
+    WHFSF
 )
 
 addSample(
     "WJetsExclLF",
     ["WJetsExclLF"],
     HistogramStyle.createFilled(newColor(0.0,1.0,0.45)),
-    LegendEntry(title="W+LF",drawOptions="F",priority=0)
+    LegendEntry(title="W+LF",drawOptions="F",priority=0),
+    WLFSF
 )
 
 addSample(
     "WJetsExcl",
     ["WJetsExcl"],
     HistogramStyle.createFilled(newColor(0.0,0.75,0.35)),
-    LegendEntry(title="W+jets",drawOptions="F",priority=0)
+    LegendEntry(title="W+jets",drawOptions="F",priority=0),
+    WSF
 )
 
 addSample(
     "other",
     ["DY","DiBoson"],
     HistogramStyle.createFilled(newColor(0.1,0.5,1.0)),
-    LegendEntry(title="DY+VV",drawOptions="F",priority=0)
+    LegendEntry(title="DY+VV",drawOptions="F",priority=0),
+    otherSF
 )
 
 
