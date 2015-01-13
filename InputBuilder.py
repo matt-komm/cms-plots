@@ -43,15 +43,16 @@ addInput("DY",["iso/nominal/DYJets"],
 addInput("DiBoson",["iso/nominal/WW","iso/nominal/WZ","iso/nominal/ZZ"],
     "pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
 
-wjetsFolders=["iso/nominal/W1JetsToLNu","iso/nominal/W2JetsToLNu2","iso/nominal/W3JetsToLNu2","iso/nominal/W4JetsToLNu2"]
+
+wjetsFolders=["iso/nominal/W1Jets_exclusive","iso/nominal/W2Jets_exclusive","iso/nominal/W3Jets_exclusive","iso/nominal/W4Jets_exclusive"]
 addInput("WJetsExclBF",wjetsFolders,
-    "(abs(ljet_id)==5 || abs(bjet_id)==5 || abs(sjet1_id)==5 || abs(sjet2_id)==5)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
+    "(abs(ljet_id)==5 || abs(bjet_id)==5 || abs(sjet1_id)==5 || abs(sjet2_id)==5)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")#*wjets_ct_shape_weight*wjets_fl_yield_weight")
 addInput("WJetsExclCF",wjetsFolders,
-    "((abs(ljet_id)!=5 && abs(bjet_id)!=5 && abs(sjet1_id)!=5 && abs(sjet2_id)!=5) && (abs(ljet_id)==4 || abs(bjet_id)==4 || abs(sjet1_id)==4 || abs(sjet2_id)==4))*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
+    "((abs(ljet_id)!=5 && abs(bjet_id)!=5 && abs(sjet1_id)!=5 && abs(sjet2_id)!=5) && (abs(ljet_id)==4 || abs(bjet_id)==4 || abs(sjet1_id)==4 || abs(sjet2_id)==4))*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")#*wjets_ct_shape_weight*wjets_fl_yield_weight")
 addInput("WJetsExclLF",wjetsFolders,
-    "(abs(ljet_id)!=5 && abs(bjet_id)!=5 && abs(sjet1_id)!=5 && abs(sjet2_id)!=5 && abs(ljet_id)!=4 && abs(bjet_id)!=4 && abs(sjet1_id)!=4 && abs(sjet2_id)!=4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
-addInput("WJetsExcl",wjetsFolders,
-    "pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
+    "(abs(ljet_id)!=5 && abs(bjet_id)!=5 && abs(sjet1_id)!=5 && abs(sjet2_id)!=5 && abs(ljet_id)!=4 && abs(bjet_id)!=4 && abs(sjet1_id)!=4 && abs(sjet2_id)!=4)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")#*wjets_ct_shape_weight*wjets_fl_yield_weight")
+addInput("WJets",wjetsFolders,
+    "pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")#*wjets_ct_shape_weight*wjets_fl_yield_weight")
 
 #data
 addInput("SingleMu",["iso/data/SingleMu"])
@@ -69,8 +70,8 @@ addInput("AntiIsoTTJetsDi",["antiiso/nominal/TTJets_FullLept"],"(-1*top_weight)*
 addInput("AntiIsoTTJetsSemi",["antiiso/nominal/TTJets_SemiLept"],"(-1*top_weight)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
 addInput("AntiIsoDY",["antiiso/nominal/DYJets"],"(-1)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
 addInput("AntiIsoDiBoson",["antiiso/nominal/WW","antiiso/nominal/WZ","antiiso/nominal/ZZ"],"(-1)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
-wjetsFolders=["antiiso/nominal/W1JetsToLNu","antiiso/nominal/W2JetsToLNu2","antiiso/nominal/W3JetsToLNu2","antiiso/nominal/W4JetsToLNu2"]
-addInput("AntiIsoWJetsExcl",wjetsFolders,"(-1)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")
+wjetsFolders=["antiiso/nominal/W1Jets_exclusive","antiiso/nominal/W2Jets_exclusive","antiiso/nominal/W3Jets_exclusive","antiiso/nominal/W4Jets_exclusive"]
+addInput("AntiIsoWJetsExcl",wjetsFolders,"(-1)*pu_weight*b_weight*lepton_weight__id*lepton_weight__trigger*lepton_weight__iso*xsweight")#*wjets_ct_shape_weight*wjets_fl_yield_weight")
 
 
 ##### create systematic variations
@@ -180,14 +181,20 @@ def findSampleFiles(basedir):
     for inputName in sorted(inputDict.keys()):
         inputDict[inputName].files=[]
         inputDict[inputName].weights=[]
+        
         for folder in inputDict[inputName].folderList:
             path = os.path.join(basedir,folder)
+            
+            N=0
             for root, dirs, files in os.walk(path):
                 for file in files:
                     if file.endswith(".root") and file.find("output")!=-1:
                          inputDict[inputName].datafiles.append(os.path.join(root,file))
+                         N+=1
                     if file.endswith(".root.added") and file.find("output")!=-1:
                          inputDict[inputName].weightfiles.append(os.path.join(root,file))
+                        
+            print "\t...",path, N
         if len(inputDict[inputName].datafiles)==len(inputDict[inputName].weightfiles):
             print "found ... ",inputName,"...",len(inputDict[inputName].datafiles)," files"
         else:

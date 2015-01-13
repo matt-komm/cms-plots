@@ -36,7 +36,7 @@ for category in [["2j0t",c2j0t],["2j1t--CR+SR",c2j1t],["2j1t--CR",c2j1t*Weight("
         ["lepton_iso","rel. iso","",EquiBinning(50,0,0.12)],
         ["lepton_charge","charge(l)","e",EquiBinning(3,-1.5,1.5)],
         ["lepton_phi","#phi(l)","",EquiBinning(50,-3.2,3.2)],
-        ["ljet_pt","pT(ljet)","GeV",EquiBinning(50,0,400)],
+        ["ljet_pt","pT(ljet)","GeV",EquiBinning(50,0,250)],
         ["ljet_eta","#eta(ljet)","",EquiBinning(50,-5,5)],
         ["ljet_mass","m(ljet)","GeV",EquiBinning(50,0,50)],
         ["ljet_dr","#Delta--R(lj)","",EquiBinning(50,0,7)],
@@ -47,8 +47,8 @@ for category in [["2j0t",c2j0t],["2j1t--CR+SR",c2j1t],["2j1t--CR",c2j1t*Weight("
         ["bjet_mass","m(bjet)","GeV",EquiBinning(50,0,50)],
         ["bjet_dr","#Delta--R(bj)","",EquiBinning(50,0,7)],
         ["bjet_phi","#phi(bj)","",EquiBinning(50,-3.2,3.2)],
-        ["cos_theta_whel_lj","cos#theta_{whel}","",EquiBinning(50,-1,1)],
-        ["cos_theta_lj","cos#theta_{lj}","",EquiBinning(50,-1,1)],
+        ["cos_theta_whel_lj","cos#theta_{W-hel}","",EquiBinning(50,-1,1)],
+        ["cos_theta_lj","cos#theta^{*}_{l}","",EquiBinning(50,-1,1)],
         ["top_pt","pT(top)","GeV",EquiBinning(50,0,300)],
         ["top_eta","#eta(top)","",EquiBinning(50,-6,6)],
         ["top_mass","m(top)","GeV",EquiBinning(50,100,500)],
@@ -86,11 +86,10 @@ for category in [["2j0t",c2j0t],["2j1t--CR+SR",c2j1t],["2j1t--CR",c2j1t*Weight("
             f.write("Queue\n")
 
             
-for category in [["2j0t",c2j0t],["3j1t",c3j1t],["3j2t",c3j2t]]:
+for category in [["2j0t",c2j0t],["3j1t",c3j1t],["3j2t",c3j2t],["2j1t--CR",c2j1t*Weight("(bdt_sig_bg<0.0)")]]:
     for var in [
         ["bdt_sig_bg","BDT--t-chan.","",EquiBinning(50,-1,1)],
         ["bdt_qcd","BDT--QCD","",EquiBinning(50,-1,1)]
-        
     ]:
         for qcd in [["qcdnone",Weight("1")],["qcdmtw",qcdMuMTW],["qcdbdt",Weight("(bdt_qcd>0.4)")]]:
             args="Arguments = \"'--mode=plot' '--name=mu_"+category[0]+"_"+var[0]+"_"+qcd[0]+"' '--stackMC=MC_mu_single' '--stackData=data_mu' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=#mu+jets,--"+category[0]+",--16.9' '--weightMC="+(category[1]*qcd[1]*lumiMu).get()+"' '--weightData="+(category[1]*qcd[1]).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n" 
@@ -103,7 +102,7 @@ for category in [["2j0t",c2j0t],["3j1t",c3j1t],["3j2t",c3j2t]]:
                 start=-1.0+cosBin*2.0/Nbins
                 end=start+2.0/Nbins
                 cutWeight=Weight("(cos_theta_lj>"+str(start)+")*(cos_theta_lj<"+str(end)+")")
-                args="Arguments = \"'--mode=plot' '--addtext=cos#theta*#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=mu_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_mu_single' '--stackData=data_mu' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=#mu+jets,--"+category[0]+",--16.9' '--weightMC="+(category[1]*qcd[1]*lumiMu*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n" 
+                args="Arguments = \"'--mode=plot' '--addtext=cos#theta^{*}_{l}#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=mu_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_mu_single' '--stackData=data_mu' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=#mu+jets,--"+category[0]+",--16.9' '--weightMC="+(category[1]*qcd[1]*lumiMu*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n" 
                 #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
                 f.write(args)
                 f.write("Queue\n")
@@ -119,16 +118,15 @@ for category in [["2j0t",c2j0t],["3j1t",c3j1t],["3j2t",c3j2t]]:
                 start=-1.0+cosBin*2.0/Nbins
                 end=start+2.0/Nbins
                 cutWeight=Weight("(cos_theta_lj>"+str(start)+")*(cos_theta_lj<"+str(end)+")")
-                args="Arguments = \"'--mode=plot' '--addtext=cos#theta*#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=ele_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_ele_single' '--stackData=data_ele' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=e+jets,--"+category[0]+",--18.9' '--weightMC="+(category[1]*qcd[1]*lumiEle*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n"
+                args="Arguments = \"'--mode=plot' '--addtext=cos#theta^{*}_{l}#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=ele_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_ele_single' '--stackData=data_ele' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=e+jets,--"+category[0]+",--18.9' '--weightMC="+(category[1]*qcd[1]*lumiEle*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n"
                 #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
                 f.write(args)
                 f.write("Queue\n")
             
 
-for category in [["2j1t--CR",c2j1t]]:
+for category in [["2j1t--blind",c2j1t]]:
     for var in [
-        ["bdt_sig_bg","BDT--t-chan.","",EquiBinning(50,-1,1)],
-        ["bdt_qcd","BDT--QCD","",EquiBinning(50,-1,1)]
+        ["bdt_sig_bg","BDT--t-chan.","",EquiBinning(50,-1,1)]
     ]:
         for qcd in [["qcdnone",Weight("1")],["qcdmtw",qcdMuMTW],["qcdbdt",Weight("(bdt_qcd>0.4)")]]:
             args="Arguments = \"'--mode=plot' '--name=mu_"+category[0]+"_"+var[0]+"_"+qcd[0]+"' '--stackMC=MC_mu_single' '--stackData=data_mu' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=#mu+jets,--"+category[0]+",--16.9' '--weightMC="+(category[1]*qcd[1]*lumiMu).get()+"' '--weightData="+(category[1]*qcd[1]*Weight("(bdt_sig_bg<0.0)")).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n"
@@ -141,7 +139,7 @@ for category in [["2j1t--CR",c2j1t]]:
                 start=-1.0+cosBin*2.0/Nbins
                 end=start+2.0/Nbins
                 cutWeight=Weight("(cos_theta_lj>"+str(start)+")*(cos_theta_lj<"+str(end)+")")
-                args="Arguments = \"'--mode=plot' '--addtext=cos#theta*#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=mu_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_mu_single' '--stackData=data_mu' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=#mu+jets,--"+category[0]+",--16.9' '--weightMC="+(category[1]*qcd[1]*lumiMu*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight*Weight("(bdt_sig_bg<0.0)")).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n" 
+                args="Arguments = \"'--mode=plot' '--addtext=cos#theta^{*}_{l}#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=mu_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_mu_single' '--stackData=data_mu' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=#mu+jets,--"+category[0]+",--16.9' '--weightMC="+(category[1]*qcd[1]*lumiMu*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight*Weight("(bdt_sig_bg<0.0)")).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n" 
                 #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
                 f.write(args)
                 f.write("Queue\n")
@@ -157,7 +155,7 @@ for category in [["2j1t--CR",c2j1t]]:
                 start=-1.0+cosBin*2.0/Nbins
                 end=start+2.0/Nbins
                 cutWeight=Weight("(cos_theta_lj>"+str(start)+")*(cos_theta_lj<"+str(end)+")")
-                args="Arguments = \"'--mode=plot' '--addtext=cos#theta*#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=ele_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_ele_single' '--stackData=data_ele' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=e+jets,--"+category[0]+",--18.9' '--weightMC="+(category[1]*qcd[1]*lumiEle*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight*Weight("(bdt_sig_bg<0.0)")).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n"
+                args="Arguments = \"'--mode=plot' '--addtext=cos#theta^{*}_{l}#in["+str(round(start,2))+";"+str(round(end,2))+"]' '--name=ele_"+category[0]+"_"+var[0]+"_"+qcd[0]+"_cosBin"+str(cosBin)+"' '--stackMC=MC_ele_single' '--stackData=data_ele' '--var="+var[0]+"' '--varName="+var[1]+"' '--unit="+var[2]+"' '--text=e+jets,--"+category[0]+",--18.9' '--weightMC="+(category[1]*qcd[1]*lumiEle*cutWeight).get()+"' '--weightData="+(category[1]*qcd[1]*cutWeight*Weight("(bdt_sig_bg<0.0)")).get()+"' '--binning="+str(var[3]).replace(" ","")+"'\"\n"
                 #args=args.replace("'","\\\"")#.replace("(","\\\\(").replace(")","\\\\)")
                 f.write(args)
                 f.write("Queue\n")
