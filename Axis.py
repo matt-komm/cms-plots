@@ -1,4 +1,8 @@
 import math
+import random
+from Drawable import *
+
+import ROOT
 
 class AxisStyle:
     def __init__(self,title="",fontScale=1.0,offsetScale=1.0,thickScale=1.0):
@@ -97,6 +101,28 @@ class CoordinateStyle:
                 self.yaxis.unit=" / "+str(round(diff*1000,2))+"#scale[0.68]{#times10^{-3}} "+unit
         self.xaxis.applyStyle(rootGrid.GetXaxis())
         self.yaxis.applyStyle(rootGrid.GetYaxis())
+        
+class EmtpyGrid(Drawable):
+    def __init__(self,xmin,xmax,ymin,ymax):
+        Drawable.__init__(self,hasAxis=True, allowLayout=False)
+        self._xmin,self._xmax,self._ymin,self._ymax=xmin,xmax,ymin,ymax
+        
+    def draw(self,canvas,strech=Strech(),addOptions=""):
+        pass
+        
+    def getBoundingBox(self):
+        return BoundingBox(
+            BoundingBox.COORDINATES,
+            self._xmin,
+            self._ymin,
+            self._xmax,
+            self._ymax
+        )
+        
+        
+    def getLegendInfo(self):
+        return []
+    
         
         
         

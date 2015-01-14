@@ -122,6 +122,9 @@ class Canvas:
         
     def setFactorSpace(self,key,value):
         self._factorSpace[key]=value
+        
+    def save(self,name):
+        self.rootCanvas.Print(name)
     
         
     def draw(self):
