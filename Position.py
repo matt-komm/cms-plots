@@ -15,17 +15,17 @@ class Position:
         LEFT_STACKED=BoundingBox(BoundingBox.PERCENTS,0.19,0.56,0.45,0.78)
         RIGHT_STACKED=BoundingBox(BoundingBox.PERCENTS,0.64,0.56,0.94,0.78)
         
-        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.81,0.33,0.99,0.9)
+        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.725,0.33,0.99,0.9)
         
     class Lumi:
         RIGHT=BoundingBox(BoundingBox.PERCENTS,0.6,0.997,0.965,0.997)
         
-        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.8,0.997,0.8,0.997)
+        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.725,0.997,0.725,0.997)
         
         
     class Canvas:
-        FILLED=BoundingBox(BoundingBox.PERCENTS,0.16,0.14,1-0.055,1-0.065)
-        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.16,0.14,1-0.2,1-0.065)
+        FILLED=BoundingBox(BoundingBox.PERCENTS,0.15,0.14,1-0.055,1-0.065)
+        OUTSIDE=BoundingBox(BoundingBox.PERCENTS,0.15,0.14,1-0.28,1-0.065)
         
 class GlobalPosition:
     def __init__(self):

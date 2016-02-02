@@ -20,7 +20,7 @@ class AxisStyle:
         self.titleColor=1
         
         self.labelSize=9
-        self.labelOffset=0.015
+        self.labelOffset=0.01
         self.labelFont=43
         self.labelColor=1
         
@@ -87,7 +87,7 @@ class CoordinateStyle:
                 unit=self.unit
                 self.xaxis.unit=" ("+unit+")"
             else:
-                unit="units"
+                unit="Units"
             
             diff = self.unitBinning.getArray()[1]-self.unitBinning.getArray()[0]
             if diff==1.0*int(diff):
@@ -99,6 +99,11 @@ class CoordinateStyle:
                 self.yaxis.unit=" / "+str(int(diff*1000))+"#scale[0.68]{#times10^{-3}} "+unit
             else:
                 self.yaxis.unit=" / "+str(round(diff*1000,2))+"#scale[0.68]{#times10^{-3}} "+unit
+                
+        ###
+        self.yaxis.unit=" / bin"
+        ###
+                
         self.xaxis.applyStyle(rootGrid.GetXaxis())
         self.yaxis.applyStyle(rootGrid.GetYaxis())
         

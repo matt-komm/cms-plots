@@ -26,7 +26,7 @@ class InfoText(Drawable):
         self._paves=[]
         
     @staticmethod
-    def createCMSText(preliminary=True,simulation=False, orientation=SIDEWAYS,position=Position.CMSText.LEFT_SIDEWAYS):
+    def createCMSText(preliminary=False,simulation=False, orientation=SIDEWAYS,position=Position.CMSText.LEFT_SIDEWAYS):
         textItemList=[]
         textItemList.append(TextItem("CMS",63,10))
         addtext=""

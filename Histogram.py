@@ -38,6 +38,24 @@ class HistogramStyle(LineStyle,FillStyle,MarkerStyle):
         return s
         
     @staticmethod
+    def createLine(lineColor=-1):
+        s = HistogramStyle()
+        s.lineColor=lineColor
+        s.lineStyle=1
+        s.lineWidth=1
+        
+        s.fillColor=0
+        s.fillStyle=0
+        
+        s.markerColor=0
+        s.markerStyle=0
+        s.markerSize=0
+        
+        s.drawingOption="HISTL"
+        
+        return s
+        
+    @staticmethod
     def createMarkers(markerColor=1,markerStyle=20,markerSize=1.15):
         s = HistogramStyle()
         s.lineColor=markerColor
@@ -112,7 +130,7 @@ class ArrayBinning(Binning):
     def fromRootHistogram(rootHist):
         binningArray=numpy.zeros(rootHist.GetNbinsX()+1)
         for i in range(rootHist.GetNbinsX()+1):
-            binningArray[i]=rootHist.GetXaxis().GetBinLowEdge(i)
+            binningArray[i]=rootHist.GetXaxis().GetBinLowEdge(i+1)
         return ArrayBinning(binningArray)
         
     def getArray(self):
@@ -150,6 +168,13 @@ class Histogram1D(Drawable):
         
     def addHistogram(self,otherHistogram,scale=1.0):
         self._rootHistogram.Add(otherHistogram._rootHistogram,scale)
+        
+    def scale(self,scale=1.0):
+        self._rootHistogram.Scale(scale)
+        
+    def rebin(self,n):
+        self._rootHistogram.Rebin(n)
+        self._binning=ArrayBinning.fromRootHistogram(self._rootHistogram)
         
     def divideHistogram(self,otherHistogram):
         self._rootHistogram.Divide(otherHistogram._rootHistogram)
@@ -197,6 +222,7 @@ class Histogram1D(Drawable):
     def createEmpty(binning):
         h = Histogram1D()
         h._rootHistogram=ROOT.TH1F("hist"+str(random.random()),"",binning.getN(),binning.getArray())
+        h._rootHistogram.SetDirectory(0)
         h._rootHistogram.Sumw2()
         h._binning=binning
         return h

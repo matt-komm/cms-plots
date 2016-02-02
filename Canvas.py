@@ -100,6 +100,7 @@ class Canvas:
         ROOT.TGaxis.SetMaxDigits(3)
         
         self._coordinateStyle=CoordinateStyle()
+        self._coordinateStyle.yaxis.exponent=False
         self._grid=None
         
         self._constSpace={"xmin":0.0,"xmax":0.0,"ymin":0.0,"ymax":0.0}
@@ -266,9 +267,10 @@ class CanvasResiduen:
         tdrStyle.cd()
         #ROOT.TGaxis.SetExponentOffset(0.0,0.0,"XY")
         #ROOT.TGaxis.SetExponentOffset(0.0,0.007,"Y")
-        ROOT.TGaxis.SetMaxDigits(3)
+        #ROOT.TGaxis.SetMaxDigits(3)
         
         self._coordinateStyle=CoordinateStyle()
+        self._coordinateStyle.yaxis.exponent=False
         self._grid=None
         
         self._constSpace={"xmin":0.0,"xmax":0.0,"ymin":0.0,"ymax":0.0}
@@ -288,7 +290,7 @@ class CanvasResiduen:
         self._coordinateStyle.xaxis.lableSize=0.00000000000000000000001
         self._coordinateStyleRes=copy.deepcopy(style)
         #self._coordinateStyleRes.yaxis.labelSize=0.000001
-        self._coordinateStyleRes.yaxis.title="data/MC"
+        self._coordinateStyleRes.yaxis.title="Data/MC"
         self._coordinateStyleRes.yaxis.ndiv=504
         self._coordinateStyleRes.yaxis.enableUnit=False
         '''
